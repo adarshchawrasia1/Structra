@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuildCalc India — Construction Cost Estimator</title>
+  <meta name="description" content="Estimate construction costs for residential, commercial, and warehouse projects across India. Free, accurate, instant." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   RESET & ROOT
+═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --c-dark:    #0d0f1a;
+  --c-dark2:   #141827;
+  --c-dark3:   #1c2035;
+  --c-card:    #1e2237;
+  --c-border:  rgba(255,255,255,0.07);
+  --c-amber:   #f59e0b;
+  --c-amber2:  #fbbf24;
+  --c-amber-d: #b45309;
+  --c-blue:    #3b82f6;
+  --c-green:   #10b981;
+  --c-red:     #ef4444;
+  --c-purple:  #8b5cf6;
+  --c-cyan:    #06b6d4;
+  --c-text:    #f1f5f9;
+  --c-muted:   #94a3b8;
+  --c-dim:     #475569;
+  --radius:    12px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
+  --shadow:    0 4px 24px rgba(0,0,0,0.35);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.5);
+  --font:      'Inter', sans-serif;
+  --font-head: 'Space Grotesk', sans-serif;
+  --transition: 0.22s ease;
+}
+
+/* Light mode */
+body.light {
+  --c-dark:  #f8fafc;
+  --c-dark2: #f1f5f9;
+  --c-dark3: #e2e8f0;
+  --c-card:  #ffffff;
+  --c-border: rgba(0,0,0,0.1);
+  --c-text:  #0f172a;
+  --c-muted: #64748b;
+  --c-dim:   #94a3b8;
+  --shadow:  0 4px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.15);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--c-dark);
+  color: var(--c-text);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--c-dark2); }
+::-webkit-scrollbar-thumb { background: var(--c-dim); border-radius: 4px; }
+
+/* ═══════════════════════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════════════════════ */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(13,15,26,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--c-border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+  transition: background var(--transition);
+}
+body.light .navbar { background: rgba(248,250,252,0.9); }
+
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--c-text);
+  text-decoration: none;
+}
+.nav-logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--c-amber), #f97316);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.nav-links { display: flex; align-items: center; gap: 1.5rem; }
+.nav-links a {
+  color: var(--c-muted); text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  transition: color var(--transition);
+}
+.nav-links a:hover { color: var(--c-amber); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.btn-theme {
+  background: var(--c-dark3); border: 1px solid var(--c-border);
+  color: var(--c-muted); width: 38px; height: 38px;
+  border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all var(--transition);
+}
+.btn-theme:hover { color: var(--c-amber); border-color: var(--c-amber); }
+.btn-cta {
+  background: var(--c-amber); color: #0d0f1a;
+  border: none; padding: 9px 20px;
+  border-radius: var(--radius-sm); font-size: 14px;
+  font-weight: 700; cursor: pointer;
+  transition: all var(--transition); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-cta:hover { background: var(--c-amber2); transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 80px 1.5rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(245,158,11,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 50% at 80% 80%, rgba(59,130,246,0.08) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.hero-content { position: relative; max-width: 780px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,158,11,0.12);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: var(--c-amber);
+  padding: 7px 18px; border-radius: 50px;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 1.5rem;
+  animation: fadeInDown 0.6s ease both;
+}
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+  animation: fadeInUp 0.6s 0.1s ease both;
+}
+.hero h1 span { color: var(--c-amber); }
+.hero p {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--c-muted);
+  max-width: 560px;
+  margin: 0 auto 2.5rem;
+  animation: fadeInUp 0.6s 0.2s ease both;
+}
+.hero-btns {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 3rem;
+  animation: fadeInUp 0.6s 0.3s ease both;
+}
+.btn-primary {
+  background: var(--c-amber); color: #0d0f1a;
+  border: none; padding: 14px 32px;
+  border-radius: 50px; font-size: 1rem;
+  font-weight: 700; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all var(--transition);
+  box-shadow: 0 0 40px rgba(245,158,11,0.3);
+}
+.btn-primary:hover { background: var(--c-amber2); transform: translateY(-2px); box-shadow: 0 0 60px rgba(245,158,11,0.4); }
+.btn-secondary {
+  background: transparent; color: var(--c-text);
+  border: 1px solid var(--c-border); padding: 14px 32px;
+  border-radius: 50px; font-size: 1rem;
+  font-weight: 600; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: all var(--transition);
+}
+.btn-secondary:hover { border-color: var(--c-muted); background: var(--c-dark3); }
+
+.hero-stats {
+  display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
+  animation: fadeInUp 0.6s 0.4s ease both;
+}
+.hero-stat { text-align: center; }
+.hero-stat .val {
+  font-family: var(--font-head); font-size: 2.2rem;
+  font-weight: 800; color: var(--c-amber); display: block;
+}
+.hero-stat .lbl { font-size: 12px; color: var(--c-dim); margin-top: 2px; }
+
+/* Floating cards decorating hero */
+.float-card {
+  position: absolute;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--c-muted);
+  display: flex; align-items: center; gap: 8px;
+  animation: float 4s ease-in-out infinite;
+  backdrop-filter: blur(8px);
+}
+.float-card.c1 { top: 22%; left: 4%; animation-delay: 0s; }
+.float-card.c2 { top: 30%; right: 4%; animation-delay: 1.5s; }
+.float-card.c3 { bottom: 15%; left: 6%; animation-delay: 0.8s; }
+@media(max-width:900px){ .float-card { display: none; } }
+
+/* ═══════════════════════════════════════════════════════════
+   HOW IT WORKS
+═══════════════════════════════════════════════════════════ */
+#how { padding: 5rem 1.5rem; background: var(--c-dark2); }
+.section-header { text-align: center; margin-bottom: 3.5rem; }
+.section-eyebrow {
+  font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--c-amber);
+  margin-bottom: 0.75rem; display: block;
+}
+.section-header h2 {
+  font-family: var(--font-head); font-size: clamp(1.8rem,4vw,2.8rem);
+  font-weight: 800; color: var(--c-text); margin-bottom: 0.75rem;
+}
+.section-header p { color: var(--c-muted); font-size: 1rem; max-width: 500px; margin: 0 auto; }
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+}
+.step-item {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  position: relative;
+  transition: transform var(--transition), border-color var(--transition);
+}
+.step-item:hover { transform: translateY(-4px); border-color: rgba(245,158,11,0.3); }
+.step-num {
+  font-family: var(--font-head); font-size: 3rem; font-weight: 900;
+  color: rgba(245,158,11,0.12); position: absolute; top: 16px; right: 20px;
+  line-height: 1;
+}
+.step-icon {
+  width: 48px; height: 48px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 1rem;
+}
+.step-item h3 { font-size: 1rem; font-weight: 700; color: var(--c-text); margin-bottom: 0.5rem; }
+.step-item p { font-size: 13px; color: var(--c-muted); line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════════════
+   ESTIMATOR SECTION
+═══════════════════════════════════════════════════════════ */
+#estimator { padding: 5rem 1.5rem; }
+.estimator-wrap { max-width: 900px; margin: 0 auto; }
+
+/* Progress indicator */
+.progress-track {
+  display: flex; align-items: center; margin-bottom: 2.5rem;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.25rem 2rem;
+  gap: 0;
+}
+.pt-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; flex: 1;
+}
+.pt-circle {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  border: 2px solid var(--c-dim);
+  color: var(--c-dim);
+  transition: all 0.3s;
+}
+.pt-circle.active { background: var(--c-amber); border-color: var(--c-amber); color: #0d0f1a; }
+.pt-circle.done   { background: var(--c-green); border-color: var(--c-green); color: white; }
+.pt-label { font-size: 11px; font-weight: 600; color: var(--c-dim); transition: color 0.3s; white-space: nowrap; }
+.pt-label.active { color: var(--c-amber); }
+.pt-label.done   { color: var(--c-green); }
+.pt-line { height: 2px; flex: 1; background: var(--c-border); margin-bottom: 22px; transition: background 0.3s; }
+.pt-line.done { background: var(--c-green); }
+
+/* Form card */
+.form-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+}
+.form-card-header { margin-bottom: 2rem; }
+.form-card-header h3 {
+  font-family: var(--font-head); font-size: 1.4rem;
+  font-weight: 700; color: var(--c-text); margin-bottom: 4px;
+}
+.form-card-header p { font-size: 14px; color: var(--c-muted); }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+.form-group label { font-size: 13px; font-weight: 600; color: var(--c-muted); }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--c-dark2);
+  border: 1px solid var(--c-border);
+  color: var(--c-text);
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  width: 100%;
+  appearance: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--c-amber);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+}
+.form-group select option { background: var(--c-dark2); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+/* Unit toggle */
+.input-with-toggle { display: flex; gap: 8px; }
+.input-with-toggle input { flex: 1; }
+.unit-toggle {
+  display: flex;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden; flex-shrink: 0;
+}
+.unit-btn {
+  padding: 0 14px; border: none;
+  background: transparent; color: var(--c-muted);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+}
+.unit-btn.active { background: var(--c-amber); color: #0d0f1a; }
+
+/* Type & quality selectors */
+.selector-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.sel-card {
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.1rem 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+  background: var(--c-dark2);
+}
+.sel-card:hover { border-color: rgba(245,158,11,0.4); background: var(--c-dark3); }
+.sel-card.selected-type { border-color: var(--c-blue); background: rgba(59,130,246,0.08); }
+.sel-card.selected-qual { border-color: var(--c-amber); background: rgba(245,158,11,0.08); }
+.sel-card .sel-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+.sel-card .sel-name { font-size: 13px; font-weight: 700; color: var(--c-text); }
+.sel-card .sel-sub  { font-size: 11px; color: var(--c-dim); margin-top: 3px; }
+.sel-card .sel-range { font-size: 11px; color: var(--c-amber); font-weight: 600; margin-top: 4px; }
+
+/* Divider label */
+.section-divider {
+  margin: 1.75rem 0 1.25rem;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-divider span {
+  font-size: 13px; font-weight: 700;
+  color: var(--c-muted); white-space: nowrap;
+}
+.section-divider::before, .section-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--c-border);
+}
+
+/* Nav buttons */
+.nav-row {
+  display: flex; justify-content: flex-end;
+  gap: 12px; margin-top: 2rem;
+}
+.btn-back {
+  background: transparent;
+  border: 1px solid var(--c-border);
+  color: var(--c-muted);
+  padding: 12px 24px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all var(--transition); display: flex; align-items: center; gap: 6px;
+}
+.btn-back:hover { border-color: var(--c-muted); color: var(--c-text); }
+.btn-next {
+  background: var(--c-amber); color: #0d0f1a;
+  border: none; padding: 12px 28px;
+  border-radius: var(--radius-sm); font-size: 14px;
+  font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: all var(--transition);
+}
+.btn-next:hover { background: var(--c-amber2); transform: translateY(-1px); }
+.btn-calc {
+  background: linear-gradient(135deg, var(--c-green), #059669);
+  color: white; border: none; padding: 13px 32px;
+  border-radius: var(--radius-sm); font-size: 14px;
+  font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  transition: all var(--transition); font-family: var(--font);
+}
+.btn-calc:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(16,185,129,0.35); }
+
+/* Budget section */
+.budget-box {
+  background: var(--c-dark2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.budget-result-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-top: 1rem;
+}
+.budget-res {
+  background: var(--c-dark3);
+  border-radius: var(--radius-sm); padding: 1rem; text-align: center;
+}
+.budget-res .val {
+  font-family: var(--font-head); font-size: 1.5rem;
+  font-weight: 800; color: var(--c-amber);
+}
+.budget-res .lbl { font-size: 12px; color: var(--c-dim); margin-top: 3px; }
+
+/* ═══════════════════════════════════════════════════════════
+   RESULTS SECTION
+═══════════════════════════════════════════════════════════ */
+#results { display: none; padding: 0 1.5rem 5rem; }
+.results-wrap { max-width: 1100px; margin: 0 auto; }
+
+.results-topbar {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; flex-wrap: wrap; gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.results-topbar h2 {
+  font-family: var(--font-head); font-size: 1.6rem;
+  font-weight: 800; color: var(--c-text);
+}
+.results-topbar p { font-size: 13px; color: var(--c-muted); margin-top: 3px; }
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-action {
+  background: var(--c-dark3); color: var(--c-muted);
+  border: 1px solid var(--c-border); padding: 9px 16px;
+  border-radius: var(--radius-sm); font-size: 13px;
+  font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: all var(--transition);
+}
+.btn-action:hover { border-color: var(--c-muted); color: var(--c-text); }
+.btn-action.new-est { border-color: rgba(245,158,11,0.4); color: var(--c-amber); }
+.btn-action.new-est:hover { background: rgba(245,158,11,0.1); }
+
+/* Hero cost card */
+.cost-hero-card {
+  background: linear-gradient(135deg, #0d1530 0%, #141e3a 50%, #0d2040 100%);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative; overflow: hidden;
+}
+.cost-hero-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(245,158,11,0.12) 0%, transparent 70%);
+}
+.cost-label {
+  font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(245,158,11,0.6); font-weight: 700; position: relative;
+}
+.cost-ticker {
+  font-family: var(--font-head); font-size: clamp(2.8rem,8vw,5rem);
+  font-weight: 900; color: var(--c-amber);
+  font-variant-numeric: tabular-nums;
+  display: block; margin: 8px 0 4px; position: relative;
+  text-shadow: 0 0 80px rgba(245,158,11,0.3);
+}
+.cost-range { font-size: 13px; color: rgba(255,255,255,0.35); position: relative; }
+.cost-badges {
+  display: flex; justify-content: center; gap: 10px;
+  flex-wrap: wrap; margin-top: 16px; position: relative;
+}
+.cost-badge {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 5px 14px; border-radius: 50px;
+  font-size: 12px; color: rgba(255,255,255,0.5);
+}
+
+/* Metrics row */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px; margin-bottom: 1.5rem;
+}
+.metric-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+}
+.metric-icon { font-size: 1.5rem; margin-bottom: 8px; display: block; }
+.metric-val {
+  font-family: var(--font-head); font-size: 1.35rem;
+  font-weight: 800; color: var(--c-text); display: block;
+}
+.metric-lbl { font-size: 12px; color: var(--c-dim); margin-top: 2px; }
+
+/* Tabs */
+.tab-bar {
+  display: flex; gap: 4px;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius); padding: 6px;
+  margin-bottom: 1.5rem; flex-wrap: wrap;
+}
+.tab-btn {
+  flex: 1; min-width: 100px;
+  padding: 9px 12px; border: none;
+  border-radius: calc(var(--radius) - 4px);
+  background: transparent; color: var(--c-muted);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all var(--transition);
+}
+.tab-btn.active {
+  background: var(--c-dark2); color: var(--c-text);
+  box-shadow: var(--shadow);
+}
+.tab-btn:hover:not(.active) { color: var(--c-text); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Breakdown panel */
+.breakdown-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+@media(max-width:640px) { .breakdown-grid { grid-template-columns: 1fr; } }
+
+.breakdown-list-wrap { display: flex; flex-direction: column; gap: 14px; }
+.bk-item { }
+.bk-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.bk-name { font-size: 13px; font-weight: 600; color: var(--c-text); }
+.bk-pct  { font-size: 13px; font-weight: 700; }
+.bk-bar-bg { height: 8px; background: var(--c-dark3); border-radius: 4px; overflow: hidden; }
+.bk-bar { height: 8px; border-radius: 4px; transition: width 1.2s ease; }
+.bk-amount { font-size: 12px; color: var(--c-dim); margin-top: 3px; }
+
+/* Chart container */
+.chart-wrap {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.chart-title { font-size: 14px; font-weight: 700; color: var(--c-muted); margin-bottom: 1rem; }
+
+/* Contractor cards */
+.contractors-grid { display: flex; flex-direction: column; gap: 14px; }
+.contractor-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex; gap: 14px; align-items: flex-start;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.contractor-card:hover { border-color: rgba(245,158,11,0.3); transform: translateX(4px); }
+.con-avatar {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px; color: white; flex-shrink: 0;
+}
+.con-body { flex: 1; min-width: 0; }
+.con-name { font-size: 15px; font-weight: 700; color: var(--c-text); }
+.con-meta { font-size: 12px; color: var(--c-dim); margin-top: 3px; }
+.con-stars { color: var(--c-amber); font-size: 13px; margin: 4px 0; }
+.con-quote { font-size: 12px; color: var(--c-green); font-weight: 600; }
+.con-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.tag {
+  font-size: 11px; padding: 3px 10px; border-radius: 50px;
+  font-weight: 600;
+}
+.tag-blue { background: rgba(59,130,246,0.12); color: #60a5fa; }
+.tag-green { background: rgba(16,185,129,0.12); color: #34d399; }
+.tag-amber { background: rgba(245,158,11,0.12); color: var(--c-amber); }
+.verified-badge {
+  background: rgba(16,185,129,0.1);
+  border: 1px solid rgba(16,185,129,0.2);
+  color: var(--c-green); font-size: 11px; font-weight: 700;
+  padding: 4px 10px; border-radius: 50px;
+  display: flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+.con-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.con-price { font-size: 12px; color: var(--c-muted); text-align: right; }
+
+/* Insights */
+.insights-grid { display: flex; flex-direction: column; gap: 12px; }
+.insight-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  display: flex; gap: 14px; align-items: flex-start;
+  transition: border-color var(--transition);
+}
+.insight-card:hover { border-color: rgba(245,158,11,0.25); }
+.insight-card.saving { border-left: 3px solid var(--c-green); }
+.insight-card.warning { border-left: 3px solid var(--c-amber); }
+.insight-card.tip     { border-left: 3px solid var(--c-blue); }
+.insight-card.info    { border-left: 3px solid var(--c-purple); }
+.insight-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  background: var(--c-dark3);
+}
+.insight-text { font-size: 14px; color: var(--c-muted); line-height: 1.6; }
+.insight-text strong { color: var(--c-text); font-weight: 700; }
+
+/* Charts panel */
+.charts-two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+}
+@media(max-width:640px) { .charts-two-col { grid-template-columns: 1fr; } }
+
+/* ═══════════════════════════════════════════════════════════
+   CITY RATES SECTION
+═══════════════════════════════════════════════════════════ */
+#cities { padding: 5rem 1.5rem; background: var(--c-dark2); }
+.cities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px; max-width: 1100px; margin: 0 auto;
+}
+.city-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: all var(--transition); cursor: pointer;
+}
+.city-card:hover { border-color: rgba(245,158,11,0.3); transform: translateY(-2px); }
+.city-name { font-size: 14px; font-weight: 700; color: var(--c-text); }
+.city-region { font-size: 12px; color: var(--c-dim); margin-top: 2px; }
+.city-rate {
+  font-family: var(--font-head); font-size: 1rem;
+  font-weight: 800; color: var(--c-amber);
+}
+.city-tier { font-size: 11px; color: var(--c-dim); text-align: right; margin-top: 2px; }
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════════ */
+footer {
+  background: var(--c-dark2);
+  border-top: 1px solid var(--c-border);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--c-dim); font-size: 13px;
+}
+footer a { color: var(--c-amber); text-decoration: none; }
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST NOTIFICATION
+═══════════════════════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(100px); opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 20px; }
+.toast-text { font-size: 14px; font-weight: 500; color: var(--c-text); }
+
+/* ═══════════════════════════════════════════════════════════
+   LOADER
+═══════════════════════════════════════════════════════════ */
+.loader-overlay {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(13,15,26,0.7); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; flex-direction: column;
+  gap: 1rem;
+}
+.loader-overlay.show { display: flex; }
+.spinner {
+  width: 48px; height: 48px;
+  border: 3px solid rgba(245,158,11,0.2);
+  border-top-color: var(--c-amber);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+.loader-text { color: var(--c-muted); font-size: 14px; font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════════════════ */
+@keyframes fadeInUp   { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform:none; } }
+@keyframes fadeInDown { from { opacity:0; transform: translateY(-16px); } to { opacity:1; transform:none; } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes spin  { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════ */
+@media(max-width:768px) {
+  .navbar { padding: 0 1rem; }
+  .nav-links { display: none; }
+  .form-card { padding: 1.5rem; }
+  .selector-grid { grid-template-columns: 1fr 1fr; }
+  .progress-track { padding: 1rem; }
+  .pt-label { font-size: 10px; }
+  .hero-stats { gap: 1.5rem; }
+}
+@media(max-width:480px) {
+  .selector-grid { grid-template-columns: 1fr; }
+  .charts-two-col { grid-template-columns: 1fr; }
+  .metrics-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ NAVBAR ══════════════════ -->
+<nav class="navbar">
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-icon">🏗️</div>
+    BuildCalc<span style="color:var(--c-amber)">India</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#estimator">Estimator</a>
+    <a href="#cities">City Rates</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-theme" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+      <i class="ti ti-sun"></i>
+    </button>
+    <a href="#estimator" class="btn-cta">
+      <i class="ti ti-calculator"></i> Get Estimate
+    </a>
+  </div>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <!-- Floating decorative cards -->
+  <div class="float-card c1">
+    <span style="color:var(--c-green);font-size:18px">📊</span>
+    <div><div style="font-weight:700;color:var(--c-text);font-size:13px">₹45.2 Lakhs</div><div style="font-size:11px">Estimate generated</div></div>
+  </div>
+  <div class="float-card c2">
+    <span style="font-size:18px">⭐</span>
+    <div><div style="font-weight:700;color:var(--c-text);font-size:13px">4.8/5 Rating</div><div style="font-size:11px">Contractor matched</div></div>
+  </div>
+  <div class="float-card c3">
+    <span style="color:var(--c-amber);font-size:18px">💡</span>
+    <div><div style="font-weight:700;color:var(--c-text);font-size:13px">18% saved</div><div style="font-size:11px">Smart suggestion</div></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <i class="ti ti-building" style="font-size:14px"></i>
+      India's Most Detailed Construction Estimator
+    </div>
+    <h1>Build Smart.<br>Estimate <span>Accurately.</span></h1>
+    <p>Instant, detailed cost estimates for residential, commercial, and warehouse construction — based on real India market rates across 15+ cities.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="scrollToEstimator()">
+        <i class="ti ti-calculator"></i> Start Free Estimate
+      </button>
+      <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+        <i class="ti ti-info-circle"></i> How it works
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="val">15+</span><span class="lbl">Cities covered</span></div>
+      <div class="hero-stat"><span class="val">₹1400</span><span class="lbl">Starting rate/sqft</span></div>
+      <div class="hero-stat"><span class="val">6</span><span class="lbl">Cost categories</span></div>
+      <div class="hero-stat"><span class="val">3 sec</span><span class="lbl">Instant results</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ HOW IT WORKS ══════════════════ -->
+<section id="how">
+  <div class="section-header">
+    <span class="section-eyebrow">Process</span>
+    <h2>How It Works</h2>
+    <p>Get your complete construction cost estimate in 3 simple steps.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-item">
+      <div class="step-num">01</div>
+      <div class="step-icon" style="background:rgba(245,158,11,0.12)">📐</div>
+      <h3>Enter Plot Details</h3>
+      <p>Input your plot size, built-up area percentage, number of floors, and select your city from 15+ locations.</p>
+    </div>
+    <div class="step-item">
+      <div class="step-num">02</div>
+      <div class="step-icon" style="background:rgba(59,130,246,0.12)">🏗️</div>
+      <h3>Choose Preferences</h3>
+      <p>Select building type (residential, commercial, warehouse) and quality level (basic, standard, or premium).</p>
+    </div>
+    <div class="step-item">
+      <div class="step-num">03</div>
+      <div class="step-icon" style="background:rgba(16,185,129,0.12)">⚙️</div>
+      <h3>Set Materials & Budget</h3>
+      <p>Optionally customize cement, steel, and labour prices. Enter your budget to see what's buildable.</p>
+    </div>
+    <div class="step-item">
+      <div class="step-num">04</div>
+      <div class="step-icon" style="background:rgba(139,92,246,0.12)">📊</div>
+      <h3>Get Full Report</h3>
+      <p>Instant cost breakdown by category, interactive charts, contractor matches, and smart money-saving suggestions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ ESTIMATOR FORM ══════════════════ -->
+<section id="estimator">
+  <div class="estimator-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">Estimator Tool</span>
+      <h2>Calculate Your Cost</h2>
+      <p>Fill in the details below and get an instant, detailed breakdown.</p>
+    </div>
+
+    <!-- Progress Track -->
+    <div class="progress-track" id="progressTrack">
+      <div class="pt-step">
+        <div class="pt-circle active" id="pc1"><i class="ti ti-ruler" style="font-size:16px"></i></div>
+        <div class="pt-label active" id="pl1">Plot Details</div>
+      </div>
+      <div class="pt-line" id="pline1"></div>
+      <div class="pt-step">
+        <div class="pt-circle" id="pc2">2</div>
+        <div class="pt-label" id="pl2">Preferences</div>
+      </div>
+      <div class="pt-line" id="pline2"></div>
+      <div class="pt-step">
+        <div class="pt-circle" id="pc3">3</div>
+        <div class="pt-label" id="pl3">Materials</div>
+      </div>
+      <div class="pt-line" id="pline3"></div>
+      <div class="pt-step">
+        <div class="pt-circle" id="pc4">4</div>
+        <div class="pt-label" id="pl4">Results</div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Plot Details -->
+    <div class="form-card" id="formStep1">
+      <div class="form-card-header">
+        <h3>📐 Plot & Location Details</h3>
+        <p>Enter your plot size, floors, and select your city for accurate pricing.</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group" style="grid-column: span 2">
+          <label>Plot Size</label>
+          <div class="input-with-toggle">
+            <input type="number" id="plotSize" value="1500" min="1" placeholder="e.g. 1500">
+            <div class="unit-toggle">
+              <button class="unit-btn active" id="btnSqft" onclick="setUnit('sqft')">sq ft</button>
+              <button class="unit-btn" id="btnSqm" onclick="setUnit('sqm')">sq m</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Built-up Area %</label>
+          <input type="number" id="builtupPct" value="75" min="40" max="100">
+        </div>
+        <div class="form-group">
+          <label>Number of Floors</label>
+          <input type="number" id="floors" value="2" min="1" max="30">
+        </div>
+        <div class="form-group" style="grid-column: span 2">
+          <label>City / Location</label>
+          <select id="city">
+            <option value="nagpur">Nagpur — ₹1,800/sqft (Tier 2)</option>
+            <option value="pune">Pune — ₹2,200/sqft (Tier 1)</option>
+            <option value="mumbai">Mumbai — ₹3,000/sqft (Metro)</option>
+            <option value="delhi">Delhi — ₹2,800/sqft (Metro)</option>
+            <option value="bangalore">Bangalore — ₹2,600/sqft (Metro)</option>
+            <option value="hyderabad">Hyderabad — ₹2,000/sqft (Tier 1)</option>
+            <option value="chennai">Chennai — ₹2,100/sqft (Tier 1)</option>
+            <option value="ahmedabad">Ahmedabad — ₹1,700/sqft (Tier 1)</option>
+            <option value="kolkata">Kolkata — ₹1,900/sqft (Metro)</option>
+            <option value="jaipur">Jaipur — ₹1,600/sqft (Tier 2)</option>
+            <option value="lucknow">Lucknow — ₹1,500/sqft (Tier 2)</option>
+            <option value="surat">Surat — ₹1,750/sqft (Tier 2)</option>
+            <option value="bhopal">Bhopal — ₹1,550/sqft (Tier 2)</option>
+            <option value="coimbatore">Coimbatore — ₹1,850/sqft (Tier 2)</option>
+            <option value="indore">Indore — ₹1,600/sqft (Tier 2)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-divider"><span>Building Type</span></div>
+
+      <div class="selector-grid">
+        <div class="sel-card selected-type" id="type-residential" onclick="selectType('residential')">
+          <span class="sel-icon">🏠</span>
+          <div class="sel-name">Residential</div>
+          <div class="sel-sub">Home / Villa / Flat</div>
+        </div>
+        <div class="sel-card" id="type-commercial" onclick="selectType('commercial')">
+          <span class="sel-icon">🏢</span>
+          <div class="sel-name">Commercial</div>
+          <div class="sel-sub">Office / Retail / Hotel</div>
+        </div>
+        <div class="sel-card" id="type-warehouse" onclick="selectType('warehouse')">
+          <span class="sel-icon">🏭</span>
+          <div class="sel-name">Warehouse</div>
+          <div class="sel-sub">Factory / Godown</div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-next" onclick="goStep(2)">
+          Next: Preferences <i class="ti ti-arrow-right" style="font-size:16px"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Quality & Description -->
+    <div class="form-card" id="formStep2" style="display:none">
+      <div class="form-card-header">
+        <h3>🏗️ Construction Quality</h3>
+        <p>Choose the quality level that fits your vision and budget.</p>
+      </div>
+
+      <div class="selector-grid">
+        <div class="sel-card" id="q-basic" onclick="selectQuality('basic')">
+          <span class="sel-icon">🧱</span>
+          <div class="sel-name">Basic</div>
+          <div class="sel-range">₹1400–₹1800/sqft</div>
+          <div class="sel-sub">Standard brick & mortar, minimal finishes, functional fittings</div>
+        </div>
+        <div class="sel-card selected-qual" id="q-standard" onclick="selectQuality('standard')">
+          <span class="sel-icon">🏗️</span>
+          <div class="sel-name">Standard</div>
+          <div class="sel-range">₹1800–₹2500/sqft</div>
+          <div class="sel-sub">Good finishes, branded fittings, tile flooring, modular kitchen</div>
+        </div>
+        <div class="sel-card" id="q-premium" onclick="selectQuality('premium')">
+          <span class="sel-icon">✨</span>
+          <div class="sel-name">Premium</div>
+          <div class="sel-range">₹2500–₹4000+/sqft</div>
+          <div class="sel-sub">Luxury finishes, imported materials, smart home, landscaping</div>
+        </div>
+      </div>
+
+      <div class="section-divider"><span>Project Description (Optional)</span></div>
+
+      <div class="form-group">
+        <label>Describe your project</label>
+        <textarea id="description" placeholder="e.g. 3BHK home with parking space, solar panels, terrace garden, RCC construction..."></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="goStep(1)"><i class="ti ti-arrow-left" style="font-size:16px"></i> Back</button>
+        <button class="btn-next" onclick="goStep(3)">
+          Next: Materials <i class="ti ti-arrow-right" style="font-size:16px"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Materials & Budget -->
+    <div class="form-card" id="formStep3" style="display:none">
+      <div class="form-card-header">
+        <h3>⚙️ Material Prices & Budget</h3>
+        <p>Customize material prices for a more accurate estimate. Leave blank to use city averages.</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Cement (₹ per 50kg bag)</label>
+          <input type="number" id="cementPrice" placeholder="Market avg ~₹380" min="100" max="2000">
+        </div>
+        <div class="form-group">
+          <label>Steel (₹ per kg)</label>
+          <input type="number" id="steelPrice" placeholder="Market avg ~₹65" min="20" max="500">
+        </div>
+        <div class="form-group">
+          <label>Labour (₹ per day)</label>
+          <input type="number" id="labourCost" placeholder="Market avg ~₹750" min="100" max="10000">
+        </div>
+      </div>
+
+      <div class="section-divider"><span>💰 Budget Planner</span></div>
+
+      <div class="budget-box">
+        <div class="form-group">
+          <label>Your Total Budget (₹)</label>
+          <input type="number" id="budget" placeholder="e.g. 5000000 (for ₹50 Lakhs)" min="0" oninput="onBudgetInput(this.value)">
+        </div>
+        <div class="budget-result-row" id="budgetResultRow" style="display:none">
+          <div class="budget-res">
+            <div class="val" id="budgetMaxArea">--</div>
+            <div class="lbl">Max Buildable Area (sqft)</div>
+          </div>
+          <div class="budget-res">
+            <div class="val" id="budgetMaxFloors">--</div>
+            <div class="lbl">Max Floors Possible</div>
+          </div>
+        </div>
+        <p id="budgetTip" style="font-size:12px;color:var(--c-dim);margin-top:10px;display:none"></p>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="goStep(2)"><i class="ti ti-arrow-left" style="font-size:16px"></i> Back</button>
+        <button class="btn-calc" onclick="runCalculation()">
+          <i class="ti ti-calculator" style="font-size:18px"></i> Generate Full Estimate
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ RESULTS ══════════════════ -->
+<section id="results">
+  <div class="results-wrap">
+    <div class="results-topbar">
+      <div>
+        <h2>Your Construction Estimate</h2>
+        <p id="resultSubtitle">Based on your inputs and city rates</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn-action" onclick="printReport()"><i class="ti ti-printer"></i> Print</button>
+        <button class="btn-action" onclick="exportReport()"><i class="ti ti-download"></i> Export</button>
+        <button class="btn-action new-est" onclick="newEstimate()"><i class="ti ti-refresh"></i> New Estimate</button>
+      </div>
+    </div>
+
+    <!-- Hero Cost Card -->
+    <div class="cost-hero-card">
+      <div class="cost-label">Total Estimated Cost</div>
+      <span class="cost-ticker" id="costTicker">₹0</span>
+      <div class="cost-range" id="costRange">Calculating range...</div>
+      <div class="cost-badges" id="costBadges"></div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row" id="metricsRow"></div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showTab('breakdown')" id="tab-breakdown">
+        <i class="ti ti-chart-pie" style="font-size:15px"></i> Breakdown
+      </button>
+      <button class="tab-btn" onclick="showTab('charts')" id="tab-charts">
+        <i class="ti ti-chart-bar" style="font-size:15px"></i> Charts
+      </button>
+      <button class="tab-btn" onclick="showTab('contractors')" id="tab-contractors">
+        <i class="ti ti-users" style="font-size:15px"></i> Contractors
+      </button>
+      <button class="tab-btn" onclick="showTab('insights')" id="tab-insights">
+        <i class="ti ti-bulb" style="font-size:15px"></i> Insights
+      </button>
+    </div>
+
+    <!-- Breakdown Panel -->
+    <div class="tab-panel active" id="panel-breakdown">
+      <div class="breakdown-grid">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--c-muted);margin-bottom:1rem">Material & Labour Costs</div>
+          <div class="breakdown-list-wrap" id="breakdownList"></div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Cost Distribution</div>
+          <div id="bkLegend" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:12px;color:var(--c-muted)"></div>
+          <div style="position:relative;height:220px">
+            <canvas id="doughnutChart" role="img" aria-label="Doughnut chart of cost distribution">Cost breakdown by category.</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Panel -->
+    <div class="tab-panel" id="panel-charts">
+      <div class="charts-two-col">
+        <div class="chart-wrap">
+          <div class="chart-title">Category Comparison (₹ Lakhs)</div>
+          <div id="barLegend" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:12px;color:var(--c-muted)"></div>
+          <div style="position:relative;height:280px">
+            <canvas id="barChart" role="img" aria-label="Bar chart comparing construction cost categories">Bar comparison.</canvas>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-title">Cost per Sqft Benchmarks</div>
+          <div id="benchLegend" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:12px;color:var(--c-muted)"></div>
+          <div style="position:relative;height:280px">
+            <canvas id="benchChart" role="img" aria-label="Benchmark chart of construction rates by quality">Quality benchmarks.</canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contractors Panel -->
+    <div class="tab-panel" id="panel-contractors">
+      <div class="contractors-grid" id="contractorsList"></div>
+    </div>
+
+    <!-- Insights Panel -->
+    <div class="tab-panel" id="panel-insights">
+      <div class="insights-grid" id="insightsList"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════ CITY RATES ══════════════════ -->
+<section id="cities">
+  <div class="section-header">
+    <span class="section-eyebrow">Pricing Data</span>
+    <h2>City-wise Rates</h2>
+    <p>Base construction rates per sqft across major Indian cities (Standard quality, Residential).</p>
+  </div>
+  <div class="cities-grid" id="citiesGrid"></div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <div class="nav-logo" style="justify-content:center;margin-bottom:1rem">
+    <div class="nav-logo-icon">🏗️</div>
+    BuildCalc<span style="color:var(--c-amber)">India</span>
+  </div>
+  <p>© 2025 BuildCalc India. Estimates are indicative and based on market averages. Always consult a licensed engineer.</p>
+  <p style="margin-top:8px">Built by Adarsh • DPGU University, Pune</p>
+</footer>
+
+<!-- Loader -->
+<div class="loader-overlay" id="loader">
+  <div class="spinner"></div>
+  <div class="loader-text">Calculating your estimate...</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span class="toast-text" id="toastText">Done!</span>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+<script>
+/* ─── State ──────────────────────────────────────────────── */
+const STATE = {
+  unit:         'sqft',
+  buildingType: 'residential',
+  quality:      'standard',
+  step:         1,
+  estimate:     null,
+  charts:       { doughnut: null, bar: null, bench: null },
+  darkMode:     true
+};
+
+/* ─── Data Tables ────────────────────────────────────────── */
+const CITY_RATES = {
+  nagpur:     { rate:1800, name:'Nagpur',     region:'Maharashtra',  tier:'Tier 2' },
+  pune:       { rate:2200, name:'Pune',       region:'Maharashtra',  tier:'Tier 1' },
+  mumbai:     { rate:3000, name:'Mumbai',     region:'Maharashtra',  tier:'Metro'  },
+  delhi:      { rate:2800, name:'Delhi',      region:'Delhi NCR',   tier:'Metro'  },
+  bangalore:  { rate:2600, name:'Bangalore',  region:'Karnataka',   tier:'Metro'  },
+  hyderabad:  { rate:2000, name:'Hyderabad',  region:'Telangana',   tier:'Tier 1' },
+  chennai:    { rate:2100, name:'Chennai',    region:'Tamil Nadu',  tier:'Tier 1' },
+  ahmedabad:  { rate:1700, name:'Ahmedabad',  region:'Gujarat',     tier:'Tier 1' },
+  kolkata:    { rate:1900, name:'Kolkata',    region:'West Bengal', tier:'Metro'  },
+  jaipur:     { rate:1600, name:'Jaipur',     region:'Rajasthan',   tier:'Tier 2' },
+  lucknow:    { rate:1500, name:'Lucknow',    region:'U.P.',        tier:'Tier 2' },
+  surat:      { rate:1750, name:'Surat',      region:'Gujarat',     tier:'Tier 2' },
+  bhopal:     { rate:1550, name:'Bhopal',     region:'M.P.',        tier:'Tier 2' },
+  coimbatore: { rate:1850, name:'Coimbatore', region:'Tamil Nadu',  tier:'Tier 2' },
+  indore:     { rate:1600, name:'Indore',     region:'M.P.',        tier:'Tier 2' }
+};
+
+const QUALITY_RANGES = {
+  basic:    { min:1400, max:1800, mid:1600 },
+  standard: { min:1800, max:2500, mid:2150 },
+  premium:  { min:2500, max:4000, mid:3250 }
+};
+
+const TYPE_MULTIPLIERS = { residential:1.00, commercial:1.15, warehouse:0.85 };
+
+const BREAKDOWN_RATIOS = {
+  'Cement':      { pct:0.12, color:'#f59e0b' },
+  'Steel':       { pct:0.18, color:'#3b82f6' },
+  'Bricks':      { pct:0.11, color:'#ef4444' },
+  'Sand & Gravel':{ pct:0.10,color:'#8b5cf6' },
+  'Labour':      { pct:0.28, color:'#10b981' },
+  'Finishing':   { pct:0.21, color:'#06b6d4' }
+};
+
+const CONTRACTORS_DB = {
+  nagpur: [
+    { name:'Ravi Constructions Pvt Ltd', initials:'RC', rating:4.8, reviews:142, phone:'9876543210', range:'₹1,750–₹1,900/sqft', exp:18, projects:320, specs:['Residential','Commercial'], verified:true },
+    { name:'Shiva Builders Pvt Ltd',     initials:'SB', rating:4.6, reviews:89,  phone:'9123456789', range:'₹1,800–₹2,000/sqft', exp:12, projects:210, specs:['Residential','Warehouse'], verified:true },
+    { name:'Prime Infra Group',          initials:'PI', rating:4.5, reviews:67,  phone:'9988776655', range:'₹1,700–₹1,950/sqft', exp:10, projects:180, specs:['Commercial'],              verified:true }
+  ],
+  pune: [
+    { name:'Pune Urban Developers',  initials:'PU', rating:4.7, reviews:203, phone:'9234567890', range:'₹2,100–₹2,400/sqft', exp:22, projects:450, specs:['Residential','Commercial'], verified:true },
+    { name:'Konark Constructions',   initials:'KC', rating:4.9, reviews:315, phone:'9345678901', range:'₹2,200–₹2,500/sqft', exp:28, projects:600, specs:['Premium','Residential'],   verified:true },
+    { name:'Aakash Build Co.',       initials:'AB', rating:4.4, reviews:98,  phone:'9456789012', range:'₹2,000–₹2,300/sqft', exp:9,  projects:155, specs:['Residential','Warehouse'], verified:true }
+  ],
+  mumbai: [
+    { name:'Oberoi Realty Works',      initials:'OR', rating:4.9, reviews:428, phone:'9567890123', range:'₹2,900–₹3,200/sqft', exp:35, projects:800,  specs:['Premium','Commercial'],    verified:true },
+    { name:'Lodha Construction',       initials:'LC', rating:4.8, reviews:512, phone:'9678901234', range:'₹3,000–₹3,500/sqft', exp:40, projects:1200, specs:['Premium','Residential'],   verified:true },
+    { name:'Mumbai Metro Builders',    initials:'MM', rating:4.5, reviews:187, phone:'9789012345', range:'₹2,800–₹3,100/sqft', exp:15, projects:290,  specs:['Residential','Commercial'],verified:true }
+  ],
+  delhi: [
+    { name:'Delhi Master Builders', initials:'DM', rating:4.7, reviews:234, phone:'9890123456', range:'₹2,700–₹3,000/sqft', exp:20, projects:410, specs:['Commercial','Residential'], verified:true },
+    { name:'NCR Infra Solutions',   initials:'NI', rating:4.6, reviews:176, phone:'9901234567', range:'₹2,600–₹2,900/sqft', exp:14, projects:280, specs:['Commercial','Warehouse'],  verified:true }
+  ],
+  bangalore: [
+    { name:'Brigade Constructions', initials:'BC', rating:4.8, reviews:389, phone:'9012345678', range:'₹2,500–₹2,800/sqft', exp:30, projects:750, specs:['Residential','Premium'],   verified:true },
+    { name:'Prestige Build Works',  initials:'PW', rating:4.7, reviews:267, phone:'9123450987', range:'₹2,600–₹3,000/sqft', exp:25, projects:520, specs:['Premium','Residential'], verified:true }
+  ]
+};
+
+const DEFAULT_CONTRACTORS = [
+  { name:'National Build Corp',   initials:'NB', rating:4.6, reviews:890, phone:'1800-BUILDER', range:'City-based pricing', exp:25, projects:2000, specs:['Residential','Commercial','Warehouse'], verified:true },
+  { name:'IndiaConstruct Pro',    initials:'IC', rating:4.4, reviews:567, phone:'1800-INFRA',   range:'City-based pricing', exp:18, projects:1400, specs:['Residential','Warehouse'],              verified:true },
+  { name:'Buildtech Solutions',   initials:'BS', rating:4.3, reviews:342, phone:'1800-BUILD',   range:'City-based pricing', exp:12, projects:800,  specs:['Commercial','Residential'],             verified:true }
+];
+
+/* ─── Utility ────────────────────────────────────────────── */
+const fmtINR = n => '₹' + Math.round(n).toLocaleString('en-IN');
+const fmtLakhs = n => {
+  if (n >= 10000000) return (n/10000000).toFixed(2) + ' Cr';
+  if (n >= 100000)   return (n/100000).toFixed(2)   + ' L';
+  return Math.round(n).toLocaleString('en-IN');
+};
+
+function showToast(msg, icon = '✅') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastText').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function showLoader(v) {
+  document.getElementById('loader').classList.toggle('show', v);
+}
+
+/* ─── Theme Toggle ───────────────────────────────────────── */
+function toggleTheme() {
+  STATE.darkMode = !STATE.darkMode;
+  document.body.classList.toggle('light', !STATE.darkMode);
+  document.getElementById('themeBtn').innerHTML = STATE.darkMode
+    ? '<i class="ti ti-sun"></i>' : '<i class="ti ti-moon"></i>';
+}
+
+/* ─── Unit Toggle ────────────────────────────────────────── */
+function setUnit(u) {
+  STATE.unit = u;
+  document.getElementById('btnSqft').className = 'unit-btn' + (u==='sqft'?' active':'');
+  document.getElementById('btnSqm').className  = 'unit-btn' + (u==='sqm' ?' active':'');
+}
+
+/* ─── Building Type ──────────────────────────────────────── */
+function selectType(t) {
+  STATE.buildingType = t;
+  ['residential','commercial','warehouse'].forEach(x => {
+    document.getElementById('type-'+x).className = 'sel-card' + (x===t?' selected-type':'');
+  });
+}
+
+/* ─── Quality ────────────────────────────────────────────── */
+function selectQuality(q) {
+  STATE.quality = q;
+  ['basic','standard','premium'].forEach(x => {
+    document.getElementById('q-'+x).className = 'sel-card' + (x===q?' selected-qual':'');
+  });
+}
+
+/* ─── Step Navigation ────────────────────────────────────── */
+function goStep(n) {
+  if (n > 1 && !validateStep(STATE.step)) return;
+  [1,2,3].forEach(i => {
+    document.getElementById('formStep'+i).style.display = i===n ? '' : 'none';
+  });
+  updateProgress(n);
+  STATE.step = n;
+  document.getElementById('estimator').scrollIntoView({ behavior: 'smooth' });
+}
+
+function validateStep(n) {
+  if (n === 1) {
+    const ps = parseFloat(document.getElementById('plotSize').value);
+    if (!ps || ps <= 0) { showToast('Please enter a valid plot size', '⚠️'); return false; }
+  }
+  return true;
+}
+
+function updateProgress(n) {
+  [1,2,3,4].forEach(i => {
+    const c = document.getElementById('pc'+i);
+    const l = document.getElementById('pl'+i);
+    if (i < n) {
+      c.className = 'pt-circle done'; c.innerHTML = '<i class="ti ti-check" style="font-size:16px"></i>';
+      l.className = 'pt-label done';
+    } else if (i === n) {
+      c.className = 'pt-circle active'; c.textContent = i;
+      l.className = 'pt-label active';
+    } else {
+      c.className = 'pt-circle'; c.textContent = i;
+      l.className = 'pt-label';
+    }
+  });
+  [1,2,3].forEach(i => {
+    document.getElementById('pline'+i).className = 'pt-line' + (i<n?' done':'');
+  });
+}
+
+/* ─── Budget Planner ─────────────────────────────────────── */
+function onBudgetInput(val) {
+  const b = parseFloat(val);
+  if (!b) { document.getElementById('budgetResultRow').style.display='none'; return; }
+  const city = document.getElementById('city').value;
+  const qr   = QUALITY_RANGES[STATE.quality];
+  const rate  = CITY_RATES[city].rate * TYPE_MULTIPLIERS[STATE.buildingType];
+  const adjRate = Math.round(Math.min(Math.max(rate * (qr.mid/2150), qr.min), qr.max));
+  const ps    = parseFloat(document.getElementById('plotSize').value) || 1500;
+  const bup   = parseFloat(document.getElementById('builtupPct').value) || 75;
+  const psSqft = STATE.unit==='sqm' ? ps*10.7639 : ps;
+  const areaPerFloor = psSqft * bup/100;
+  const maxArea   = Math.floor(b / adjRate);
+  const maxFloors = Math.max(1, Math.floor(maxArea / areaPerFloor));
+
+  document.getElementById('budgetMaxArea').textContent   = maxArea.toLocaleString('en-IN');
+  document.getElementById('budgetMaxFloors').textContent = maxFloors;
+  document.getElementById('budgetResultRow').style.display = 'grid';
+  document.getElementById('budgetTip').style.display = '';
+  document.getElementById('budgetTip').textContent =
+    `At ₹${adjRate}/sqft, your budget supports ${maxFloors} floor(s) of ${Math.round(areaPerFloor).toLocaleString('en-IN')} sqft each.`;
+}
+
+/* ─── MAIN CALCULATION ───────────────────────────────────── */
+function runCalculation() {
+  if (!validateStep(3)) return;
+  showLoader(true);
+
+  setTimeout(() => {
+    try {
+      const plotSizeRaw = parseFloat(document.getElementById('plotSize').value) || 1500;
+      const plotSqft    = STATE.unit === 'sqm' ? plotSizeRaw * 10.7639 : plotSizeRaw;
+      const bup         = parseFloat(document.getElementById('builtupPct').value) || 75;
+      const floors      = parseInt(document.getElementById('floors').value) || 2;
+      const city        = document.getElementById('city').value;
+      const qr          = QUALITY_RANGES[STATE.quality];
+      const cityRate    = CITY_RATES[city].rate;
+      const typeMult    = TYPE_MULTIPLIERS[STATE.buildingType];
+
+      // Custom price adjustments
+      const cementPrice = parseFloat(document.getElementById('cementPrice').value) || 380;
+      const steelPrice  = parseFloat(document.getElementById('steelPrice').value)  || 65;
+      const labourCost  = parseFloat(document.getElementById('labourCost').value)  || 750;
+      const customAdj = ((cementPrice-380)/380 * BREAKDOWN_RATIOS['Cement'].pct) +
+                        ((steelPrice-65)/65   * BREAKDOWN_RATIOS['Steel'].pct)  +
+                        ((labourCost-750)/750  * BREAKDOWN_RATIOS['Labour'].pct);
+
+      // Effective rate
+      let adjRate = cityRate * typeMult * (qr.mid / 2150);
+      adjRate = Math.round(Math.min(Math.max(adjRate, qr.min), qr.max));
+      adjRate = Math.round(adjRate * (1 + customAdj));
+
+      // Areas & cost
+      const builtupArea = plotSqft * bup/100;
+      const totalArea   = builtupArea * floors;
+      const totalCost   = Math.round(totalArea * adjRate);
+      const costMin     = Math.round(totalArea * qr.min);
+      const costMax     = Math.round(totalArea * qr.max);
+
+      // Breakdown
+      const breakdown = {};
+      const cats = Object.keys(BREAKDOWN_RATIOS);
+      let allocated = 0;
+      cats.forEach((cat, i) => {
+        const amt = i === cats.length-1
+          ? totalCost - allocated
+          : Math.round(totalCost * BREAKDOWN_RATIOS[cat].pct);
+        breakdown[cat] = { amount: amt, pct: BREAKDOWN_RATIOS[cat].pct, color: BREAKDOWN_RATIOS[cat].color };
+        allocated += (i < cats.length-1 ? amt : 0);
+      });
+
+      STATE.estimate = { plotSqft, builtupArea, totalArea, floors, adjRate, totalCost, costMin, costMax, breakdown, city };
+
+      showLoader(false);
+      renderResults();
+      document.getElementById('results').style.display = '';
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+      updateProgress(4);
+      showToast('Estimate ready!', '🏗️');
+    } catch(e) {
+      showLoader(false);
+      showToast('Calculation error. Please check your inputs.', '❌');
+    }
+  }, 900);
+}
+
+/* ─── Render Results ─────────────────────────────────────── */
+function renderResults() {
+  const e = STATE.estimate;
+  const city = CITY_RATES[e.city];
+
+  // Subtitle
+  document.getElementById('resultSubtitle').textContent =
+    `${city.name} · ${STATE.buildingType} · ${STATE.quality} quality · ${Math.round(e.totalArea).toLocaleString('en-IN')} sqft`;
+
+  // Badges
+  document.getElementById('costBadges').innerHTML = [
+    city.name, STATE.buildingType, STATE.quality, `${e.floors} floors`, city.tier
+  ].map(t=>`<span class="cost-badge">${t}</span>`).join('');
+
+  // Metrics
+  document.getElementById('metricsRow').innerHTML = [
+    { icon:'📐', val: Math.round(e.totalArea).toLocaleString('en-IN')+' sqft', lbl:'Total Built-up Area' },
+    { icon:'💰', val: '₹'+e.adjRate.toLocaleString('en-IN'),                  lbl:'Rate per sqft' },
+    { icon:'🏢', val: e.floors,                                                 lbl:'Floors' },
+    { icon:'📊', val: fmtLakhs(e.totalCost/e.floors),                          lbl:'Cost per Floor' },
+    { icon:'🏗️', val: Math.round(e.builtupArea).toLocaleString('en-IN')+' sqft',lbl:'Area per Floor' },
+    { icon:'📉', val: fmtLakhs(e.totalCost * 0.12),                            lbl:'Contingency (12%)' },
+  ].map(m=>`<div class="metric-card">
+    <span class="metric-icon">${m.icon}</span>
+    <span class="metric-val">${m.val}</span>
+    <div class="metric-lbl">${m.lbl}</div>
+  </div>`).join('');
+
+  // Breakdown list
+  document.getElementById('breakdownList').innerHTML = Object.entries(e.breakdown).map(([cat, d]) => {
+    const pct = Math.round(d.amount / e.totalCost * 100);
+    return `<div class="bk-item">
+      <div class="bk-top">
+        <span class="bk-name">${cat}</span>
+        <span class="bk-pct" style="color:${d.color}">${pct}%</span>
+      </div>
+      <div class="bk-bar-bg"><div class="bk-bar" style="width:0%;background:${d.color}" data-pct="${pct}"></div></div>
+      <div class="bk-amount">${fmtLakhs(d.amount)}</div>
+    </div>`;
+  }).join('');
+
+  // Doughnut legend
+  document.getElementById('bkLegend').innerHTML = Object.entries(e.breakdown).map(([cat, d]) =>
+    `<span style="display:flex;align-items:center;gap:4px">
+      <span style="width:10px;height:10px;border-radius:2px;background:${d.color};display:inline-block"></span>
+      ${cat}
+    </span>`
+  ).join('');
+
+  renderContractors();
+  renderInsights();
+
+  // Animate bars after render
+  setTimeout(() => {
+    document.querySelectorAll('.bk-bar').forEach(bar => {
+      bar.style.width = bar.dataset.pct + '%';
+    });
+  }, 100);
+
+  // Animate cost ticker
+  animateCost();
+
+  // Cost range
+  document.getElementById('costRange').textContent =
+    `Range: ${fmtLakhs(e.costMin)} – ${fmtLakhs(e.costMax)}`;
+
+  // Render charts (doughnut loads immediately in breakdown tab)
+  setTimeout(() => renderDoughnut(), 200);
+}
+
+function animateCost() {
+  const e = STATE.estimate;
+  const el = document.getElementById('costTicker');
+  let current = 0;
+  const target = e.totalCost;
+  const dur = 1600, step = 16;
+  const inc = target / (dur / step);
+  const t = setInterval(() => {
+    current = Math.min(current + inc, target);
+    el.textContent = fmtINR(current);
+    if (current >= target) { clearInterval(t); el.textContent = fmtINR(target); }
+  }, step);
+}
+
+function renderDoughnut() {
+  const e = STATE.estimate;
+  if (STATE.charts.doughnut) STATE.charts.doughnut.destroy();
+  const labels = Object.keys(e.breakdown);
+  const values = labels.map(k => e.breakdown[k].amount);
+  const colors = labels.map(k => e.breakdown[k].color);
+
+  STATE.charts.doughnut = new Chart(document.getElementById('doughnutChart'), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#1e2237', hoverOffset: 6 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '65%',
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.label}: ${fmtLakhs(ctx.raw)} (${Math.round(ctx.raw/e.totalCost*100)}%)` }
+      }}
+    }
+  });
+}
+
+function renderCharts() {
+  const e = STATE.estimate;
+  if (!e) return;
+  const labels = Object.keys(e.breakdown);
+  const values = labels.map(k => e.breakdown[k].amount);
+  const colors = labels.map(k => e.breakdown[k].color);
+
+  // Bar chart
+  if (STATE.charts.bar) STATE.charts.bar.destroy();
+  STATE.charts.bar = new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values.map(v => parseFloat((v/100000).toFixed(2))), backgroundColor: colors, borderRadius: 6, borderSkipped: false }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ₹${ctx.raw.toFixed(1)} L` } } },
+      scales: { x: { ticks: { color:'#94a3b8', font:{size:11} }, grid:{color:'rgba(255,255,255,0.05)'} },
+                y: { ticks: { color:'#94a3b8', callback: v=>v+'L' }, grid:{color:'rgba(255,255,255,0.05)'} } }
+    }
+  });
+
+  // Bar legend
+  document.getElementById('barLegend').innerHTML = labels.map((l, i) =>
+    `<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:${colors[i]};display:inline-block"></span>${l}</span>`
+  ).join('');
+
+  // Benchmark chart
+  if (STATE.charts.bench) STATE.charts.bench.destroy();
+  const city = document.getElementById('city').value;
+  const benchData = [
+    { label: 'Basic',    val: QUALITY_RANGES.basic.mid,    color: '#94a3b8' },
+    { label: 'Standard', val: QUALITY_RANGES.standard.mid, color: '#f59e0b' },
+    { label: 'Premium',  val: QUALITY_RANGES.premium.mid,  color: '#8b5cf6' },
+    { label: 'Your Rate',val: e.adjRate,                   color: '#10b981' }
+  ];
+  STATE.charts.bench = new Chart(document.getElementById('benchChart'), {
+    type: 'bar',
+    data: {
+      labels: benchData.map(d=>d.label),
+      datasets: [{ data: benchData.map(d=>d.val), backgroundColor: benchData.map(d=>d.color), borderRadius: 6, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ₹${ctx.raw.toLocaleString('en-IN')}/sqft` } } },
+      scales: { x: { ticks: { color:'#94a3b8' }, grid:{color:'rgba(255,255,255,0.05)'} },
+                y: { ticks: { color:'#94a3b8', callback: v=>'₹'+v }, grid:{color:'rgba(255,255,255,0.05)'} } }
+    }
+  });
+
+  document.getElementById('benchLegend').innerHTML = benchData.map(d =>
+    `<span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:${d.color};display:inline-block"></span>${d.label}</span>`
+  ).join('');
+}
+
+/* ─── Contractors ────────────────────────────────────────── */
+function renderContractors() {
+  const city = STATE.estimate.city;
+  const list = CONTRACTORS_DB[city] || DEFAULT_CONTRACTORS;
+  const colorPairs = [['#1a2a6c','#b21f1f'],['#134e5e','#71b280'],['#373b44','#4286f4'],['#12c2e9','#c471ed'],['#f64f59','#c471ed']];
+
+  document.getElementById('contractorsList').innerHTML = list.map((c, i) => {
+    const [c1,c2] = colorPairs[i % colorPairs.length];
+    const stars = '★'.repeat(Math.floor(c.rating)) + (c.rating % 1 >= 0.5 ? '½' : '');
+    return `<div class="contractor-card">
+      <div class="con-avatar" style="background:linear-gradient(135deg,${c1},${c2})">${c.initials}</div>
+      <div class="con-body">
+        <div class="con-name">${c.name}</div>
+        <div class="con-meta">
+          <i class="ti ti-phone" style="font-size:12px"></i> ${c.phone} &nbsp;|&nbsp;
+          <i class="ti ti-briefcase" style="font-size:12px"></i> ${c.exp} yrs exp &nbsp;|&nbsp;
+          ${c.projects.toLocaleString('en-IN')} projects
+        </div>
+        <div class="con-stars">${stars} <span style="color:var(--c-dim);font-size:12px">${c.rating}/5 (${c.reviews} reviews)</span></div>
+        <div class="con-quote"><i class="ti ti-currency-rupee" style="font-size:12px"></i> ${c.range}</div>
+        <div class="con-tags">${c.specs.map(s => `<span class="tag tag-blue">${s}</span>`).join('')}</div>
+      </div>
+      <div class="con-right">
+        ${c.verified ? '<div class="verified-badge"><i class="ti ti-shield-check" style="font-size:12px"></i> Verified</div>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ─── Insights ───────────────────────────────────────────── */
+function renderInsights() {
+  const e = STATE.estimate;
+  const sorted = Object.entries(e.breakdown).sort((a,b) => b[1].amount - a[1].amount);
+  const topCat = sorted[0][0];
+  const topPct = Math.round(sorted[0][1].amount / e.totalCost * 100);
+  const lowerQ = STATE.quality === 'premium' ? 'standard' : 'basic';
+  const lowerCost = Math.round(e.totalArea * QUALITY_RANGES[lowerQ].mid);
+  const saving = e.totalCost - lowerCost;
+  const save10 = Math.round(e.totalCost * 0.1);
+  const typeTips = {
+    residential: 'RCC framing over load-bearing walls provides better structural integrity for multi-floor homes.',
+    commercial:  'Prefabricated structural elements can reduce commercial build time and cost by 15–20%.',
+    warehouse:   'Pre-engineered steel structures for warehouses cost 25–30% less than conventional RCC construction.'
+  };
+  const insights = [
+    { type:'info',    icon:'💡', title:'Top cost driver',        msg:`<strong>${topCat}</strong> is your largest cost driver at <strong>${topPct}%</strong> of total cost (${fmtLakhs(sorted[0][1].amount)}). Optimizing here gives maximum savings.` },
+    { type:'saving',  icon:'📉', title:'Quality switch savings',  msg:STATE.quality !== 'basic' ? `Switching from <strong>${STATE.quality}</strong> to <strong>${lowerQ}</strong> quality could save approximately <strong>${fmtLakhs(saving)}</strong> — that's ${Math.round(saving/e.totalCost*100)}% of your total cost.` : 'You are already at basic quality — the most cost-efficient option.' },
+    { type:'saving',  icon:'📐', title:'Area reduction impact',   msg:`Reducing your built-up area percentage by 10% would save approximately <strong>${fmtLakhs(save10)}</strong> on your total estimate.` },
+    { type:'tip',     icon:'🏗️', title:'Construction tip',       msg:typeTips[STATE.buildingType] },
+    { type:'warning', icon:'⚠️', title:'Contingency reserve',    msg:`Always keep a <strong>10–15% contingency fund</strong> (approx. <strong>${fmtLakhs(e.totalCost * 0.12)}</strong>) for unexpected costs — soil issues, weather delays, or material price changes.` },
+    { type:'info',    icon:'🏦', title:'Financing tip',           msg:`For a project of <strong>${fmtLakhs(e.totalCost)}</strong>, banks typically offer home construction loans at 8.5–9.5% p.a. A 20% down payment (<strong>${fmtLakhs(e.totalCost * 0.2)}</strong>) is usually required.` },
+  ];
+  if (e.floors > 1) insights.push({
+    type:'tip', icon:'🏢', title:'Multi-floor insight',
+    msg:`With ${e.floors} floors, each costs approximately <strong>${fmtLakhs(e.totalCost/e.floors)}</strong>. Upper floors are typically 5–8% cheaper per sqft due to shared foundation and structure.`
+  });
+
+  document.getElementById('insightsList').innerHTML = insights.map(ins =>
+    `<div class="insight-card ${ins.type}">
+      <div class="insight-icon">${ins.icon}</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--c-text);margin-bottom:4px">${ins.title}</div>
+        <div class="insight-text">${ins.msg}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+/* ─── Tab System ─────────────────────────────────────────── */
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name === 'charts') setTimeout(renderCharts, 50);
+  if (name === 'breakdown') setTimeout(renderDoughnut, 50);
+}
+
+/* ─── Export & Print ─────────────────────────────────────── */
+function exportReport() {
+  const e = STATE.estimate;
+  if (!e) return;
+  const city = CITY_RATES[e.city].name;
+  const lines = [
+    '═══════════════════════════════════════════════',
+    '     BUILDCALC INDIA — CONSTRUCTION ESTIMATE   ',
+    '═══════════════════════════════════════════════',
+    `Generated: ${new Date().toLocaleString('en-IN')}`,
+    '',
+    '── PROJECT SUMMARY ─────────────────────────────',
+    `Total Estimated Cost  : ${fmtINR(e.totalCost)}`,
+    `Cost Range            : ${fmtLakhs(e.costMin)} – ${fmtLakhs(e.costMax)}`,
+    `City                  : ${city}`,
+    `Building Type         : ${STATE.buildingType}`,
+    `Quality               : ${STATE.quality}`,
+    `Plot Size             : ${Math.round(e.plotSqft).toLocaleString('en-IN')} sqft`,
+    `Built-up Area/Floor   : ${Math.round(e.builtupArea).toLocaleString('en-IN')} sqft`,
+    `Total Built-up Area   : ${Math.round(e.totalArea).toLocaleString('en-IN')} sqft`,
+    `Floors                : ${e.floors}`,
+    `Rate per sqft         : ${fmtINR(e.adjRate)}`,
+    '',
+    '── COST BREAKDOWN ──────────────────────────────',
+    ...Object.entries(e.breakdown).map(([cat,d]) =>
+      `${cat.padEnd(18)}: ${fmtLakhs(d.amount).padStart(12)} (${Math.round(d.amount/e.totalCost*100)}%)`
+    ),
+    '',
+    '── SMART INSIGHTS ──────────────────────────────',
+    `Contingency (12%)     : ${fmtLakhs(e.totalCost * 0.12)}`,
+    `Total incl contingency: ${fmtLakhs(e.totalCost * 1.12)}`,
+    '',
+    '─────────────────────────────────────────────────',
+    'Disclaimer: This estimate is indicative. Consult',
+    'a licensed civil engineer for accurate quotation.',
+    '═══════════════════════════════════════════════'
+  ].join('\n');
+
+  const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a'); a.href = url;
+  a.download = `BuildCalc-Estimate-${city}-${Date.now()}.txt`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Report exported!', '📥');
+}
+
+function printReport() {
+  window.print();
+  showToast('Opening print dialog...', '🖨️');
+}
+
+function newEstimate() {
+  STATE.estimate = null;
+  Object.values(STATE.charts).forEach(c => { if(c) c.destroy(); });
+  STATE.charts = { doughnut:null, bar:null, bench:null };
+  document.getElementById('results').style.display = 'none';
+  goStep(1);
+  updateProgress(1);
+  document.getElementById('estimator').scrollIntoView({ behavior:'smooth' });
+}
+
+function scrollToEstimator() {
+  document.getElementById('estimator').scrollIntoView({ behavior:'smooth' });
+}
+
+/* ─── City Rates Grid ────────────────────────────────────── */
+function renderCitiesGrid() {
+  const tierColors = { Metro:'#f59e0b', 'Tier 1':'#3b82f6', 'Tier 2':'#8b5cf6' };
+  document.getElementById('citiesGrid').innerHTML = Object.entries(CITY_RATES).map(([slug, c]) =>
+    `<div class="city-card" onclick="document.getElementById('city').value='${slug}';scrollToEstimator();showToast('${c.name} selected — start your estimate!','📍')">
+      <div>
+        <div class="city-name">${c.name}</div>
+        <div class="city-region">${c.region}</div>
+      </div>
+      <div>
+        <div class="city-rate">₹${c.rate.toLocaleString('en-IN')}</div>
+        <div class="city-tier" style="color:${tierColors[c.tier]||'var(--c-dim)'}">● ${c.tier}</div>
+      </div>
+    </div>`
+  ).join('');
+}
+
+/* ─── Init ───────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderCitiesGrid();
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    const nb = document.querySelector('.navbar');
+    if (window.scrollY > 40) nb.style.borderBottomColor = 'rgba(245,158,11,0.15)';
+    else nb.style.borderBottomColor = 'var(--c-border)';
+  });
+});
+</script>
+</body>
+</html>
