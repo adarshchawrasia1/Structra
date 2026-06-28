@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Structra — Intelligent Construction Cost Platform</title>
+<meta name="description" content="Structra is India's most intelligent construction cost estimator. Reality-layer pricing, AI optimization, timeline planning, material quantities, and more."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080C14;--bg2:#0E1422;--bg3:#141B2D;--card:#111827;--card2:#1a2235;
+  --bdr:rgba(255,255,255,0.06);--bdr2:rgba(255,255,255,0.12);
+  --indigo:#6366F1;--indigo2:#818CF8;--indigo3:rgba(99,102,241,0.12);
+  --amber:#F59E0B;--amber2:#FCD34D;--amber3:rgba(245,158,11,0.12);
+  --green:#10B981;--green2:#34D399;--green3:rgba(16,185,129,0.1);
+  --red:#EF4444;--red2:#FCA5A5;--red3:rgba(239,68,68,0.1);
+  --blue:#3B82F6;--blue2:#93C5FD;--blue3:rgba(59,130,246,0.1);
+  --purple:#A855F7;--purple2:#D8B4FE;--purple3:rgba(168,85,247,0.1);
+  --cyan:#06B6D4;--cyan2:#67E8F9;
+  --tx:#F1F5F9;--tx2:#94A3B8;--tx3:#475569;
+  --font:'DM Sans',sans-serif;--fh:'Syne',sans-serif;--fm:'DM Mono',monospace;
+  --r:10px;--rl:16px;--rxl:24px;--tr:0.2s ease;
+}
+body.light{
+  --bg:#F8FAFC;--bg2:#F1F5F9;--bg3:#E2E8F0;--card:#FFFFFF;--card2:#F8FAFC;
+  --bdr:rgba(0,0,0,0.08);--bdr2:rgba(0,0,0,0.15);
+  --tx:#0F172A;--tx2:#475569;--tx3:#94A3B8;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.65;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--indigo);border-radius:3px;opacity:.5}
+
+/* ── NAVBAR ───────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;
+  background:rgba(8,12,20,0.9);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;transition:all var(--tr);
+}
+body.light .nav{background:rgba(248,250,252,0.92)}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--tx)}
+.nav-logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--indigo),var(--purple));display:flex;align-items:center;justify-content:center;font-size:16px}
+.nav-name{font-family:var(--fh);font-weight:800;font-size:1.15rem;letter-spacing:-0.02em}
+.nav-name span{color:var(--indigo2)}
+.nav-links{display:flex;gap:1.5rem}
+.nav-links a{color:var(--tx2);text-decoration:none;font-size:13px;font-weight:500;transition:color var(--tr)}
+.nav-links a:hover{color:var(--tx)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-theme{background:var(--bg3);border:1px solid var(--bdr);color:var(--tx2);width:36px;height:36px;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--tr)}
+.btn-theme:hover{border-color:var(--indigo);color:var(--indigo)}
+.btn-nav-cta{background:var(--indigo);color:white;border:none;padding:8px 18px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--tr);font-family:var(--font)}
+.btn-nav-cta:hover{background:var(--indigo2);transform:translateY(-1px)}
+@media(max-width:768px){.nav-links{display:none}}
+
+/* ── HERO ──────────────────────────────────────────── */
+#hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:80px 1.5rem 4rem;position:relative;overflow:hidden;
+}
+.hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 20%,rgba(99,102,241,0.15),transparent 65%),radial-gradient(ellipse 40% 40% at 80% 70%,rgba(245,158,11,0.08),transparent 60%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:56px 56px}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(99,102,241,0.15) 1px,transparent 1px);background-size:32px 32px;opacity:.4}
+.hero-content{position:relative;max-width:800px;margin:0 auto}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);color:var(--indigo2);padding:7px 18px;border-radius:50px;font-size:12px;font-weight:600;margin-bottom:1.5rem;letter-spacing:.02em}
+.hero-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--green2);display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hero h1{font-family:var(--fh);font-size:clamp(2.6rem,7vw,5.2rem);font-weight:800;line-height:1.0;margin-bottom:1.25rem;letter-spacing:-0.03em}
+.hero h1 .line2{color:var(--indigo2)}
+.hero h1 .line3{background:linear-gradient(90deg,var(--amber),var(--amber2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(.95rem,2vw,1.15rem);color:var(--tx2);max-width:560px;margin:0 auto 2.5rem;font-weight:300;line-height:1.75}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
+.btn-hero{background:var(--indigo);color:white;border:none;padding:14px 32px;border-radius:50px;font-size:1rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all var(--tr);font-family:var(--font);box-shadow:0 0 48px rgba(99,102,241,0.3)}
+.btn-hero:hover{background:var(--indigo2);transform:translateY(-2px);box-shadow:0 0 64px rgba(99,102,241,0.4)}
+.btn-hero2{background:transparent;color:var(--tx2);border:1px solid var(--bdr2);padding:14px 32px;border-radius:50px;font-size:1rem;font-weight:500;cursor:pointer;font-family:var(--font);display:inline-flex;align-items:center;gap:8px;transition:all var(--tr)}
+.btn-hero2:hover{border-color:var(--tx2);color:var(--tx);background:var(--bg3)}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr);border-radius:var(--rl);overflow:hidden;max-width:700px;margin:0 auto}
+.hstat{background:var(--bg2);padding:1.25rem;text-align:center}
+.hstat-val{font-family:var(--fh);font-size:1.7rem;font-weight:800;color:var(--tx);display:block}
+.hstat-lbl{font-size:11px;color:var(--tx3);margin-top:3px;font-weight:500;letter-spacing:.03em;text-transform:uppercase}
+@media(max-width:600px){.hero-stats{grid-template-columns:1fr 1fr}.hstat{padding:.9rem}}
+
+/* ── FEATURE PILLS ─────────────────────────────────── */
+.feature-strip{padding:2.5rem 1.5rem;background:var(--bg2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr)}
+.feature-strip-inner{max-width:1100px;margin:0 auto;display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center}
+.fpill{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--bdr);border-radius:50px;padding:8px 16px;font-size:12px;font-weight:600;color:var(--tx2);transition:all var(--tr);cursor:default}
+.fpill:hover{border-color:var(--indigo);color:var(--indigo2);transform:translateY(-1px)}
+.fpill-ic{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+
+/* ── SECTION SHARED ────────────────────────────────── */
+.section{padding:5rem 1.5rem}
+.section.alt{background:var(--bg2)}
+.sec-label{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--indigo2);display:block;margin-bottom:.6rem}
+.sec-h2{font-family:var(--fh);font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.6rem}
+.sec-sub{color:var(--tx2);font-size:.95rem;max-width:480px}
+.sec-head{margin-bottom:3rem}
+.sec-head.center{text-align:center;display:flex;flex-direction:column;align-items:center}
+.sec-head.center .sec-sub{margin:0 auto}
+
+/* ── HOW IT WORKS ──────────────────────────────────── */
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;max-width:1100px;margin:0 auto}
+.how-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.75rem;position:relative;overflow:hidden;transition:all var(--tr)}
+.how-card:hover{border-color:rgba(99,102,241,0.3);transform:translateY(-3px)}
+.how-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--indigo),var(--purple));opacity:0;transition:opacity var(--tr)}
+.how-card:hover::before{opacity:1}
+.how-num{font-family:var(--fh);font-size:3.5rem;font-weight:800;color:rgba(99,102,241,0.08);position:absolute;top:10px;right:16px;line-height:1}
+.how-ic{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:1rem}
+.how-card h3{font-family:var(--fh);font-size:1rem;font-weight:700;margin-bottom:.4rem}
+.how-card p{font-size:13px;color:var(--tx2);line-height:1.6}
+
+/* ── ESTIMATOR ─────────────────────────────────────── */
+.est-wrap{max-width:860px;margin:0 auto}
+
+/* Progress */
+.prog-track{display:flex;align-items:center;background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.1rem 1.75rem;margin-bottom:2rem}
+.pt-step{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1}
+.pt-circ{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:2px solid var(--tx3);color:var(--tx3);transition:all .3s;font-family:var(--fh)}
+.pt-circ.active{border-color:var(--indigo);background:var(--indigo);color:white;box-shadow:0 0 16px rgba(99,102,241,.3)}
+.pt-circ.done{border-color:var(--green);background:var(--green);color:white}
+.pt-lbl{font-size:10px;font-weight:600;color:var(--tx3);letter-spacing:.04em;text-transform:uppercase;transition:color .3s}
+.pt-lbl.active{color:var(--indigo2)}
+.pt-lbl.done{color:var(--green2)}
+.pt-line{height:2px;flex:1;background:var(--bdr);margin-bottom:22px;transition:background .3s}
+.pt-line.done{background:var(--green)}
+
+/* Form card */
+.f-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rxl);padding:2.25rem;box-shadow:0 24px 80px rgba(0,0,0,.4)}
+.f-card-head{margin-bottom:1.75rem}
+.f-card-head h3{font-family:var(--fh);font-size:1.25rem;font-weight:800;letter-spacing:-.01em;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.f-card-head p{font-size:13px;color:var(--tx2)}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg label{font-size:12px;font-weight:600;color:var(--tx2);letter-spacing:.02em}
+.fg input,.fg select,.fg textarea{
+  background:var(--bg2);border:1px solid var(--bdr);color:var(--tx);
+  padding:10px 14px;border-radius:var(--r);font-size:14px;
+  font-family:var(--font);width:100%;
+  transition:border-color var(--tr),box-shadow var(--tr);appearance:none;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.fg select option{background:var(--bg2)}
+.fg textarea{resize:vertical;min-height:72px;line-height:1.5}
+.fg input::placeholder{color:var(--tx3)}
+.input-row{display:flex;gap:8px}
+.input-row input{flex:1}
+.unit-tog{display:flex;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;flex-shrink:0}
+.utbtn{padding:0 14px;border:none;background:transparent;color:var(--tx2);font-size:12px;font-weight:700;cursor:pointer;transition:all var(--tr);font-family:var(--font);letter-spacing:.03em}
+.utbtn.on{background:var(--indigo);color:white}
+.divider{display:flex;align-items:center;gap:12px;margin:1.5rem 0 1.1rem}
+.divider span{font-size:12px;font-weight:700;color:var(--tx2);white-space:nowrap;letter-spacing:.04em;text-transform:uppercase}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bdr)}
+
+/* Selector cards */
+.sel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sel-card{border:1.5px solid var(--bdr);border-radius:var(--rl);padding:1.1rem .9rem;cursor:pointer;transition:all var(--tr);text-align:center;background:var(--bg2)}
+.sel-card:hover{background:var(--bg3)}
+.sel-card.t-on{border-color:var(--blue);background:var(--blue3)}
+.sel-card.q-on{border-color:var(--indigo);background:var(--indigo3)}
+.sel-card.s-on{border-color:var(--purple);background:var(--purple3)}
+.sel-card .ic{font-size:2rem;display:block;margin-bottom:6px}
+.sel-card .nm{font-size:13px;font-weight:700;font-family:var(--fh)}
+.sel-card .sb{font-size:11px;color:var(--tx3);margin-top:2px;line-height:1.4}
+.sel-card .rng{font-size:10px;color:var(--amber);font-weight:600;margin-top:3px}
+
+/* Nav buttons */
+.nav-row{display:flex;justify-content:flex-end;gap:10px;margin-top:1.75rem}
+.btn-back{background:transparent;border:1px solid var(--bdr);color:var(--tx2);padding:10px 22px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all var(--tr)}
+.btn-back:hover{border-color:var(--tx2);color:var(--tx)}
+.btn-nxt{background:var(--indigo);color:white;border:none;padding:10px 26px;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;transition:all var(--tr)}
+.btn-nxt:hover{background:var(--indigo2);transform:translateY(-1px)}
+.btn-calc{background:linear-gradient(135deg,var(--green),#059669);color:white;border:none;padding:12px 30px;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:8px;transition:all var(--tr)}
+.btn-calc:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(16,185,129,.3)}
+
+/* Reality Layer */
+.reality-box{background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(168,85,247,.06));border:1px solid rgba(99,102,241,.2);border-radius:var(--rl);padding:1.25rem;margin-top:1rem}
+.reality-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--indigo2);margin-bottom:.75rem;display:flex;align-items:center;gap:6px}
+.reality-label::after{content:'BETA';font-size:9px;background:var(--indigo3);border:1px solid var(--indigo);color:var(--indigo2);padding:1px 6px;border-radius:4px}
+
+/* Budget box */
+.budget-box{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.25rem}
+.budget-slider{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--indigo),var(--purple));cursor:pointer;margin:10px 0}
+.budget-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--indigo);border:3px solid white;box-shadow:0 2px 8px rgba(99,102,241,.4);cursor:pointer}
+.bud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:1rem}
+.bud-res{background:var(--card2);border-radius:var(--r);padding:.9rem;text-align:center}
+.bud-res .v{font-family:var(--fh);font-size:1.2rem;font-weight:800;color:var(--indigo2)}
+.bud-res .l{font-size:11px;color:var(--tx3);margin-top:2px}
+
+/* ── RESULTS ────────────────────────────────────────── */
+#results{padding:0 1.5rem 5rem;display:none}
+.r-wrap{max-width:1100px;margin:0 auto}
+.r-topbar{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:1.5rem}
+.r-topbar h2{font-family:var(--fh);font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+.r-topbar p{font-size:12px;color:var(--tx2);margin-top:3px}
+.r-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-act{background:var(--bg3);color:var(--tx2);border:1px solid var(--bdr);padding:8px 15px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all var(--tr);font-family:var(--font)}
+.btn-act:hover{border-color:var(--tx2);color:var(--tx)}
+.btn-act.new{border-color:rgba(99,102,241,.4);color:var(--indigo2)}
+.btn-act.new:hover{background:var(--indigo3)}
+
+/* Score + Cost hero */
+.results-hero{display:grid;grid-template-columns:1fr 280px;gap:1.25rem;margin-bottom:1.25rem}
+@media(max-width:720px){.results-hero{grid-template-columns:1fr}}
+.cost-card{background:linear-gradient(135deg,#0A0E1D,#111829,#0D1A30);border:1px solid rgba(99,102,241,.2);border-radius:var(--rxl);padding:2rem;position:relative;overflow:hidden}
+.cost-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 30% 0%,rgba(99,102,241,.1),transparent 65%)}
+.c-label{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(129,140,248,.5);font-weight:700;position:relative;margin-bottom:6px}
+.c-ticker{font-family:var(--fh);font-size:clamp(2.5rem,6vw,4rem);font-weight:800;color:white;display:block;position:relative;letter-spacing:-.03em;line-height:1}
+.c-range{font-size:12px;color:rgba(255,255,255,.3);margin-top:4px;position:relative}
+.c-badges{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px;position:relative}
+.c-badge{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);padding:4px 12px;border-radius:50px;font-size:11px;color:rgba(255,255,255,.4);text-transform:capitalize}
+.c-breakdown-mini{margin-top:1.25rem;position:relative}
+.c-bk-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;display:flex}
+.c-bk-seg{height:100%;transition:width 1.2s ease}
+
+/* Structra Score card */
+.score-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rxl);padding:1.75rem;display:flex;flex-direction:column;align-items:center;text-align:center}
+.score-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin-bottom:1rem}
+.score-gauge-wrap{position:relative;width:140px;height:140px}
+.score-gauge{transform:rotate(-90deg)}
+.score-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.score-num .n{font-family:var(--fh);font-size:2.2rem;font-weight:800}
+.score-num .l{font-size:11px;color:var(--tx2);font-weight:600}
+.score-desc{font-size:12px;color:var(--tx2);margin-top:.9rem;line-height:1.5}
+.score-tips{margin-top:1rem;display:flex;flex-direction:column;gap:5px;width:100%;text-align:left}
+.score-tip{font-size:11px;color:var(--tx2);display:flex;align-items:flex-start;gap:6px}
+.score-tip span{color:var(--green2);flex-shrink:0}
+
+/* Metrics row */
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:1.25rem}
+.m-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.1rem;text-align:center;transition:border-color var(--tr)}
+.m-card:hover{border-color:rgba(99,102,241,.25)}
+.m-ic{font-size:1.4rem;display:block;margin-bottom:5px}
+.m-val{font-family:var(--fh);font-size:1.15rem;font-weight:800;display:block;letter-spacing:-.02em}
+.m-lbl{font-size:11px;color:var(--tx3);margin-top:2px;font-weight:500}
+
+/* Risk banner */
+.risk-banner{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(245,158,11,.06));border:1px solid rgba(239,68,68,.2);border-radius:var(--r);padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:12px;margin-bottom:1.25rem}
+.risk-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.risk-text{font-size:12px;color:var(--tx2);line-height:1.6}
+.risk-text strong{color:var(--red2)}
+
+/* Tabs */
+.tab-bar{display:flex;gap:3px;background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:5px;margin-bottom:1.25rem;flex-wrap:wrap;overflow-x:auto}
+.t-btn{flex:1;min-width:90px;padding:8px 12px;border:none;border-radius:calc(var(--rl) - 3px);background:transparent;color:var(--tx2);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all var(--tr);font-family:var(--font);white-space:nowrap}
+.t-btn.on{background:var(--bg2);color:var(--tx);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.t-btn:hover:not(.on){color:var(--tx)}
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+
+/* Breakdown panel */
+.bk-two{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:640px){.bk-two{grid-template-columns:1fr}}
+.bk-list{display:flex;flex-direction:column;gap:13px}
+.bk-item .bk-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.bk-name{font-size:13px;font-weight:600}
+.bk-pct{font-size:13px;font-weight:700}
+.bk-track{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bk-fill{height:7px;border-radius:4px;width:0%;transition:width 1.2s ease}
+.bk-amount{font-size:11px;color:var(--tx3);margin-top:2px}
+.chart-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.25rem}
+.chart-title{font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:0.75rem;letter-spacing:.03em;text-transform:uppercase}
+
+/* Quantity table */
+.qty-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.qty-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.25rem;display:flex;gap:14px;align-items:center;transition:all var(--tr)}
+.qty-card:hover{border-color:rgba(99,102,241,.25);transform:translateX(3px)}
+.qty-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.qty-val{font-family:var(--fh);font-size:1.4rem;font-weight:800}
+.qty-name{font-size:12px;color:var(--tx2);margin-top:2px}
+.qty-formula{font-size:10px;color:var(--tx3);font-family:var(--fm);margin-top:3px}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-phase{display:flex;gap:16px}
+.tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.tl-dot{width:14px;height:14px;border-radius:50%;border:2px solid;flex-shrink:0;margin-top:4px}
+.tl-line{width:2px;flex:1;min-height:20px;margin-top:4px;margin-bottom:4px}
+.tl-content{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:10px;flex:1;transition:all var(--tr)}
+.tl-content:hover{border-color:rgba(99,102,241,.2)}
+.tl-phase-name{font-size:13px;font-weight:700;font-family:var(--fh);margin-bottom:3px}
+.tl-months{font-size:11px;font-weight:700;padding:2px 10px;border-radius:50px;display:inline-block;margin-bottom:6px}
+.tl-tasks{font-size:12px;color:var(--tx2);line-height:1.7}
+.tl-cost-badge{font-size:11px;font-weight:700;color:var(--amber);margin-top:6px}
+
+/* Payment plan */
+.payment-grid{display:flex;flex-direction:column;gap:10px}
+.pay-row{background:var(--card);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;transition:all var(--tr)}
+.pay-row:hover{border-color:rgba(99,102,241,.2)}
+.pay-left{}
+.pay-phase{font-size:13px;font-weight:700}
+.pay-months{font-size:11px;color:var(--tx2)}
+.pay-right{text-align:right}
+.pay-amount{font-family:var(--fh);font-size:1.15rem;font-weight:800;color:var(--tx)}
+.pay-pct{font-size:11px;color:var(--tx3)}
+.pay-bar-wrap{width:100%;height:4px;background:var(--bg3);border-radius:2px;margin-top:8px}
+.pay-bar{height:4px;border-radius:2px;transition:width 1.5s ease}
+.pay-total-row{background:var(--indigo3);border:1px solid rgba(99,102,241,.25);border-radius:var(--r);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.pay-total-label{font-size:13px;font-weight:700;color:var(--indigo2)}
+.pay-total-val{font-family:var(--fh);font-size:1.2rem;font-weight:800;color:var(--indigo2)}
+
+/* Scenario comparison */
+.scenario-table{width:100%;border-collapse:collapse;font-size:13px}
+.scenario-table th{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);padding:10px 14px;text-align:left;border-bottom:1px solid var(--bdr)}
+.scenario-table td{padding:12px 14px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.scenario-table tr:last-child td{border-bottom:none}
+.scenario-table tr:hover td{background:rgba(99,102,241,.04)}
+.sc-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:50px;font-size:11px;font-weight:700}
+.sc-highlight{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2)}
+.sc-cost{font-family:var(--fh);font-size:1rem;font-weight:800}
+.sc-tag{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700}
+
+/* Contractors */
+.con-grid{display:flex;flex-direction:column;gap:12px}
+.con-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1.1rem 1.25rem;display:flex;gap:14px;align-items:flex-start;transition:all var(--tr)}
+.con-card:hover{border-color:rgba(99,102,241,.25);transform:translateX(4px)}
+.con-av{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white;flex-shrink:0}
+.con-name{font-size:14px;font-weight:700;font-family:var(--fh)}
+.con-meta{font-size:11px;color:var(--tx3);margin-top:2px}
+.con-stars{color:var(--amber);font-size:13px;margin:3px 0}
+.con-price{font-size:12px;color:var(--green2);font-weight:600}
+.con-tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+.ctag{font-size:10px;padding:3px 9px;border-radius:50px;font-weight:600;background:var(--indigo3);color:var(--indigo2);border:1px solid rgba(99,102,241,.2)}
+.vbadge{background:var(--green3);border:1px solid rgba(16,185,129,.2);color:var(--green2);font-size:10px;font-weight:700;padding:3px 9px;border-radius:50px;display:inline-flex;align-items:center;gap:4px}
+.soil-note{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:var(--r);padding:.75rem 1rem;font-size:12px;color:var(--tx2);margin-top:.75rem}
+.soil-note strong{color:var(--amber)}
+
+/* Insights */
+.ins-grid{display:flex;flex-direction:column;gap:10px}
+.ins-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:1rem 1.25rem;display:flex;gap:12px;align-items:flex-start;transition:all var(--tr)}
+.ins-card:hover{border-color:rgba(99,102,241,.2)}
+.ins-card.saving{border-left:3px solid var(--green)}
+.ins-card.warning{border-left:3px solid var(--amber)}
+.ins-card.tip{border-left:3px solid var(--blue)}
+.ins-card.info{border-left:3px solid var(--indigo2)}
+.ins-card.risk{border-left:3px solid var(--red)}
+.ins-ic{width:34px;height:34px;border-radius:9px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ins-title{font-size:12px;font-weight:700;margin-bottom:3px;font-family:var(--fh)}
+.ins-text{font-size:12px;color:var(--tx2);line-height:1.6}
+.ins-text strong{color:var(--tx);font-weight:700}
+.ins-saving{font-size:12px;font-weight:700;color:var(--green2);margin-top:4px}
+
+/* Charts two-col */
+.charts-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:640px){.charts-2{grid-template-columns:1fr}}
+
+/* CITY RATES */
+.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;max-width:1100px;margin:0 auto}
+.city-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);padding:.9rem 1.1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all var(--tr)}
+.city-card:hover{border-color:rgba(99,102,241,.3);transform:translateY(-2px)}
+.city-name{font-size:13px;font-weight:700;font-family:var(--fh)}
+.city-region{font-size:11px;color:var(--tx3);margin-top:1px}
+.city-rate{font-family:var(--fh);font-size:.95rem;font-weight:800;color:var(--indigo2)}
+.city-tier{font-size:10px;text-align:right;margin-top:1px}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:2rem 1.5rem;text-align:center;color:var(--tx3);font-size:12px}
+footer .brand{font-family:var(--fh);font-weight:800;font-size:1rem;color:var(--tx);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+footer .brand span{color:var(--indigo2)}
+footer p{line-height:1.8}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;background:var(--card2);border:1px solid var(--bdr2);border-radius:var(--rl);padding:12px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 16px 64px rgba(0,0,0,.5);transform:translateY(80px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);max-width:300px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-icon{font-size:18px}
+.toast-text{font-size:13px;font-weight:500;color:var(--tx)}
+
+/* LOADER */
+.loader{position:fixed;inset:0;z-index:9998;background:rgba(8,12,20,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:.9rem}
+.loader.show{display:flex}
+.spin{width:48px;height:48px;border:3px solid rgba(99,102,241,.2);border-top-color:var(--indigo);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-text{color:var(--tx2);font-size:13px;font-weight:600;font-family:var(--fh)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .5s ease both}
+
+@media(max-width:600px){
+  .sel-grid{grid-template-columns:1fr 1fr}
+  .bk-two{grid-template-columns:1fr}
+  .charts-2{grid-template-columns:1fr}
+  .metrics-row{grid-template-columns:1fr 1fr}
+  .bud-grid{grid-template-columns:1fr 1fr}
+  .f-card{padding:1.5rem}
+  .prog-track{padding:.9rem 1rem}
+  .pt-lbl{font-size:9px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-brand" href="#hero">
+    <div class="nav-logo">⚡</div>
+    <div class="nav-name">Struct<span>ra</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="#how" onclick="sc('how')">How it Works</a>
+    <a href="#estimator" onclick="sc('estimator')">Estimator</a>
+    <a href="#cities" onclick="sc('cities')">City Rates</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-theme" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    <button class="btn-nav-cta" onclick="sc('estimator')">Start Estimate →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-dots"></div>
+  <div class="hero-content fade-up">
+    <div class="hero-pill"><span class="dot"></span> India's most intelligent construction platform</div>
+    <h1>
+      Don't just estimate.<br>
+      <span class="line2">Understand, optimize,</span><br>
+      <span class="line3">and build smarter.</span>
+    </h1>
+    <p class="hero-sub">Structra goes beyond basic cost estimates. Reality-layer pricing, AI-powered optimization, material quantity forecasting, timeline planning, and contractor matching — all in one place.</p>
+    <div class="hero-btns">
+      <button class="btn-hero" onclick="sc('estimator')">⚡ Get Your Structra Analysis</button>
+      <button class="btn-hero2" onclick="sc('how')">See how it works</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><span class="hstat-val">15+</span><span class="hstat-lbl">Cities</span></div>
+      <div class="hstat"><span class="hstat-val">14</span><span class="hstat-lbl">Features</span></div>
+      <div class="hstat"><span class="hstat-val">6</span><span class="hstat-lbl">Cost layers</span></div>
+      <div class="hstat"><span class="hstat-val">3 sec</span><span class="hstat-lbl">Analysis time</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE STRIP -->
+<div class="feature-strip">
+  <div class="feature-strip-inner" id="fpillsRow"></div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section alt">
+  <div class="sec-head center">
+    <span class="sec-label">Process</span>
+    <h2 class="sec-h2">From Input to Intelligence</h2>
+    <p class="sec-sub">Structra transforms your project details into actionable construction intelligence.</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-card"><div class="how-num">01</div><div class="how-ic" style="background:rgba(99,102,241,.12)">📐</div><h3>Reality-Layer Inputs</h3><p>Plot size, soil type, urban/rural setting, city — every detail affects your actual construction cost.</p></div>
+    <div class="how-card"><div class="how-num">02</div><div class="how-ic" style="background:rgba(245,158,11,.12)">⚙️</div><h3>Quality & Materials</h3><p>Choose construction quality. Optionally override cement, steel, and labour rates with local market prices.</p></div>
+    <div class="how-card"><div class="how-num">03</div><div class="how-ic" style="background:rgba(16,185,129,.12)">🧠</div><h3>Structra Analysis</h3><p>Our engine calculates cost, Structra Score, material quantities, timeline, and optimization opportunities.</p></div>
+    <div class="how-card"><div class="how-num">04</div><div class="how-ic" style="background:rgba(168,85,247,.12)">📊</div><h3>Full Decision Report</h3><p>Scenario comparison, monthly payment plan, contractor matching, and a downloadable PDF-style report.</p></div>
+  </div>
+</section>
+
+<!-- ESTIMATOR -->
+<section id="estimator" class="section">
+  <div class="est-wrap">
+    <div class="sec-head center"><span class="sec-label">Estimator Tool</span><h2 class="sec-h2">Build Your Analysis</h2><p class="sec-sub">Fill in your details below. Structra does the rest.</p></div>
+
+    <!-- Progress -->
+    <div class="prog-track">
+      <div class="pt-step"><div class="pt-circ active" id="pc1">1</div><div class="pt-lbl active" id="pl1">Plot & Reality</div></div>
+      <div class="pt-line" id="pln1"></div>
+      <div class="pt-step"><div class="pt-circ" id="pc2">2</div><div class="pt-lbl" id="pl2">Quality</div></div>
+      <div class="pt-line" id="pln2"></div>
+      <div class="pt-step"><div class="pt-circ" id="pc3">3</div><div class="pt-lbl" id="pl3">Materials</div></div>
+      <div class="pt-line" id="pln3"></div>
+      <div class="pt-step"><div class="pt-circ" id="pc4">4</div><div class="pt-lbl" id="pl4">Analysis</div></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="f-card" id="fs1">
+      <div class="f-card-head"><h3>📐 Plot & Reality Layer</h3><p>Enter your plot details plus real-world conditions that affect your actual construction cost.</p></div>
+      <div class="f-grid">
+        <div class="fg" style="grid-column:span 2">
+          <label>Plot Size</label>
+          <div class="input-row">
+            <input type="number" id="plotSize" value="1500" min="1" placeholder="e.g. 1500">
+            <div class="unit-tog"><button class="utbtn on" id="btnSqft" onclick="setUnit('sqft')">SQFT</button><button class="utbtn" id="btnSqm" onclick="setUnit('sqm')">SQM</button></div>
+          </div>
+        </div>
+        <div class="fg"><label>Built-up Area %</label><input type="number" id="builtupPct" value="75" min="40" max="100"></div>
+        <div class="fg"><label>Number of Floors</label><input type="number" id="floors" value="2" min="1" max="30"></div>
+        <div class="fg" style="grid-column:span 2">
+          <label>City / Location</label>
+          <select id="city">
+            <option value="nagpur">Nagpur — ₹1,800/sqft</option>
+            <option value="pune">Pune — ₹2,200/sqft</option>
+            <option value="mumbai">Mumbai — ₹3,000/sqft</option>
+            <option value="delhi">Delhi — ₹2,800/sqft</option>
+            <option value="bangalore">Bangalore — ₹2,600/sqft</option>
+            <option value="hyderabad">Hyderabad — ₹2,000/sqft</option>
+            <option value="chennai">Chennai — ₹2,100/sqft</option>
+            <option value="ahmedabad">Ahmedabad — ₹1,700/sqft</option>
+            <option value="kolkata">Kolkata — ₹1,900/sqft</option>
+            <option value="jaipur">Jaipur — ₹1,600/sqft</option>
+            <option value="lucknow">Lucknow — ₹1,500/sqft</option>
+            <option value="surat">Surat — ₹1,750/sqft</option>
+            <option value="bhopal">Bhopal — ₹1,550/sqft</option>
+            <option value="coimbatore">Coimbatore — ₹1,850/sqft</option>
+            <option value="indore">Indore — ₹1,600/sqft</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Reality Layer -->
+      <div class="reality-box">
+        <div class="reality-label">⚡ Reality Layer — affects actual cost</div>
+        <div class="f-grid">
+          <div class="fg">
+            <label>Location Type</label>
+            <select id="locType">
+              <option value="urban">Urban (city centre)</option>
+              <option value="suburban">Suburban (outskirts)</option>
+              <option value="rural">Rural / village</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Soil Type</label>
+            <select id="soilType">
+              <option value="normal">Normal / Hard murrum</option>
+              <option value="rocky">Rocky / Hard rock</option>
+              <option value="loose">Loose / Sandy / Soft</option>
+              <option value="expansive">Expansive / Black cotton</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Road Access</label>
+            <select id="roadAccess">
+              <option value="good">Good — wide road nearby</option>
+              <option value="moderate">Moderate — narrow lane</option>
+              <option value="poor">Poor — no direct vehicle access</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"><span>Building Type</span></div>
+      <div class="sel-grid">
+        <div class="sel-card t-on" id="type-residential" onclick="selT('residential')"><span class="ic">🏠</span><div class="nm">Residential</div><div class="sb">Home / Villa / Flat</div></div>
+        <div class="sel-card" id="type-commercial" onclick="selT('commercial')"><span class="ic">🏢</span><div class="nm">Commercial</div><div class="sb">Office / Retail</div></div>
+        <div class="sel-card" id="type-warehouse" onclick="selT('warehouse')"><span class="ic">🏭</span><div class="nm">Warehouse</div><div class="sb">Factory / Godown</div></div>
+      </div>
+      <div class="nav-row"><button class="btn-nxt" onclick="goS(2)">Next: Quality →</button></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="f-card" id="fs2" style="display:none">
+      <div class="f-card-head"><h3>🏗️ Construction Quality</h3><p>Select your quality level. Structra will suggest optimizations later.</p></div>
+      <div class="sel-grid">
+        <div class="sel-card" id="q-basic" onclick="selQ('basic')"><span class="ic">🧱</span><div class="nm">Basic</div><div class="rng">₹1400–₹1800/sqft</div><div class="sb">Standard finish, functional fittings, cement floor</div></div>
+        <div class="sel-card q-on" id="q-standard" onclick="selQ('standard')"><span class="ic">🏗️</span><div class="nm">Standard</div><div class="rng">₹1800–₹2500/sqft</div><div class="sb">Good finishes, branded fittings, tile flooring</div></div>
+        <div class="sel-card" id="q-premium" onclick="selQ('premium')"><span class="ic">✨</span><div class="nm">Premium</div><div class="rng">₹2500–₹4000+/sqft</div><div class="sb">Luxury finishes, imported materials, smart home</div></div>
+      </div>
+      <div class="divider"><span>Brick Type</span></div>
+      <div class="sel-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="sel-card s-on" id="b-red" onclick="selB('red')"><span class="ic">🧱</span><div class="nm">Red Bricks</div><div class="sb">Traditional, +0% cost</div></div>
+        <div class="sel-card" id="b-flyash" onclick="selB('flyash')"><span class="ic">⬜</span><div class="nm">Fly Ash Bricks</div><div class="sb">Eco, −8% brick cost</div></div>
+        <div class="sel-card" id="b-aac" onclick="selB('aac')"><span class="ic">🔲</span><div class="nm">AAC Blocks</div><div class="sb">Lightweight, −5% brick cost, faster</div></div>
+      </div>
+      <div class="divider"><span>Project Description (optional)</span></div>
+      <div class="fg"><textarea id="description" placeholder="e.g. 3BHK with parking, solar panels, terrace garden, RCC construction..."></textarea></div>
+      <div class="nav-row"><button class="btn-back" onclick="goS(1)">← Back</button><button class="btn-nxt" onclick="goS(3)">Next: Materials →</button></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="f-card" id="fs3" style="display:none">
+      <div class="f-card-head"><h3>⚙️ Material Prices & Budget</h3><p>Override market averages with your local prices for a more accurate estimate.</p></div>
+      <div class="f-grid">
+        <div class="fg"><label>Cement (₹ per 50kg bag)</label><input type="number" id="cementPrice" placeholder="Market avg ~₹380"></div>
+        <div class="fg"><label>Steel (₹ per kg)</label><input type="number" id="steelPrice" placeholder="Market avg ~₹65"></div>
+        <div class="fg"><label>Labour (₹ per day)</label><input type="number" id="labourCost" placeholder="Market avg ~₹750"></div>
+      </div>
+
+      <div class="divider"><span>💰 What can I build with my budget?</span></div>
+      <div class="budget-box">
+        <div class="fg">
+          <label>Your Total Budget (₹)</label>
+          <input type="range" class="budget-slider" id="budgetSlider" min="500000" max="50000000" step="100000" value="5000000" oninput="onBudgetSlide(this.value)">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-top:4px"><span>₹5L</span><span id="sliderLabel" style="color:var(--indigo2);font-weight:700;font-family:var(--fm)">₹50,00,000</span><span>₹5Cr</span></div>
+        </div>
+        <div style="margin-top:6px"><div class="fg"><label>Or type exact amount (₹)</label><input type="number" id="budgetInput" placeholder="e.g. 5000000" oninput="onBudgetType(this.value)"></div></div>
+        <div class="bud-grid" id="budRows" style="display:none">
+          <div class="bud-res"><div class="v" id="bmaxA">--</div><div class="l">Max Area (sqft)</div></div>
+          <div class="bud-res"><div class="v" id="bmaxF">--</div><div class="l">Max Floors</div></div>
+          <div class="bud-res"><div class="v" id="bqual">--</div><div class="l">Best Quality Fit</div></div>
+        </div>
+        <p id="btip" style="font-size:11px;color:var(--tx3);margin-top:8px;display:none;line-height:1.6"></p>
+      </div>
+      <div class="nav-row"><button class="btn-back" onclick="goS(2)">← Back</button><button class="btn-calc" onclick="runCalc()">⚡ Generate Structra Analysis</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ RESULTS ══════════ -->
+<section id="results">
+  <div class="r-wrap">
+    <div class="r-topbar">
+      <div><h2>Structra Analysis Report</h2><p id="rsub">Generating your personalized report...</p></div>
+      <div class="r-actions">
+        <button class="btn-act" onclick="exportReport()">📥 Export Report</button>
+        <button class="btn-act" onclick="window.print()">🖨️ Print</button>
+        <button class="btn-act new" onclick="newEst()">↺ New Analysis</button>
+      </div>
+    </div>
+
+    <!-- Risk Banner -->
+    <div class="risk-banner" id="riskBanner">
+      <div class="risk-icon">⚠️</div>
+      <div class="risk-text"><strong>Important Disclaimer:</strong> Structra estimates are based on current market averages and may vary <strong>±10–15%</strong> in real conditions. Foundation costs may increase significantly based on soil conditions. Material prices fluctuate — always verify with local suppliers. This report is a planning tool, not a contractor quote.</div>
+    </div>
+
+    <!-- Score + Cost Hero -->
+    <div class="results-hero">
+      <div class="cost-card">
+        <div class="c-label">Total Estimated Cost</div>
+        <span class="c-ticker" id="cticker">₹0</span>
+        <div class="c-range" id="crange">Calculating range...</div>
+        <div class="c-badges" id="cbadges"></div>
+        <div class="c-breakdown-mini" id="miniBars"></div>
+      </div>
+      <div class="score-card">
+        <div class="score-title">Structra Score™</div>
+        <div class="score-gauge-wrap">
+          <svg class="score-gauge" width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="Optimization score gauge">
+            <circle cx="70" cy="70" r="56" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+            <circle cx="70" cy="70" r="56" fill="none" stroke="url(#scoreGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="351.86" id="scoreArc" style="transition:stroke-dashoffset 1.5s ease"/>
+            <defs>
+              <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#6366F1"/>
+                <stop offset="100%" stop-color="#A855F7"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="score-num"><div class="n" id="scoreNum" style="color:var(--indigo2)">0</div><div class="l">/ 100</div></div>
+        </div>
+        <div class="score-desc" id="scoreDesc">Your optimization score will appear here after analysis.</div>
+        <div class="score-tips" id="scoreTips"></div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row" id="mrow"></div>
+
+    <!-- Soil Note -->
+    <div class="soil-note" id="soilNote" style="display:none"></div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="t-btn on" onclick="showT('breakdown')" id="tab-breakdown">📊 Cost Breakdown</button>
+      <button class="t-btn" onclick="showT('quantities')" id="tab-quantities">🧱 Materials</button>
+      <button class="t-btn" onclick="showT('timeline')" id="tab-timeline">📅 Timeline</button>
+      <button class="t-btn" onclick="showT('payment')" id="tab-payment">💸 Payment Plan</button>
+      <button class="t-btn" onclick="showT('scenarios')" id="tab-scenarios">⚖️ Scenarios</button>
+      <button class="t-btn" onclick="showT('contractors')" id="tab-contractors">👷 Contractors</button>
+      <button class="t-btn" onclick="showT('insights')" id="tab-insights">💡 Insights</button>
+    </div>
+
+    <!-- TAB: Breakdown -->
+    <div class="tab-panel on" id="panel-breakdown">
+      <div class="bk-two">
+        <div><div style="font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:.75rem;letter-spacing:.06em;text-transform:uppercase">Material & Labour Breakdown</div><div class="bk-list" id="bklist"></div></div>
+        <div class="chart-card">
+          <div class="chart-title">Cost Distribution</div>
+          <div id="dlegend" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;font-size:11px;color:var(--tx2)"></div>
+          <div style="position:relative;height:200px"><canvas id="dChart" role="img" aria-label="Doughnut chart of cost distribution"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Quantities -->
+    <div class="tab-panel" id="panel-quantities">
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:1rem;background:var(--indigo3);border:1px solid rgba(99,102,241,.2);border-radius:var(--r);padding:.75rem 1rem">⚡ Quantities are based on standard CPWD norms for your built-up area and building type. Consult your engineer for exact site-specific quantities.</div>
+      <div class="qty-grid" id="qtyGrid"></div>
+    </div>
+
+    <!-- TAB: Timeline -->
+    <div class="tab-panel" id="panel-timeline">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+        <div><div style="font-family:var(--fh);font-size:1.1rem;font-weight:800">Estimated Construction Timeline</div><div style="font-size:12px;color:var(--tx2);margin-top:2px" id="tlTotal"></div></div>
+        <div style="background:var(--indigo3);border:1px solid rgba(99,102,241,.2);border-radius:var(--r);padding:8px 16px;font-size:12px;color:var(--indigo2);font-weight:700" id="tlTotalBadge"></div>
+      </div>
+      <div class="timeline" id="tlWrap"></div>
+    </div>
+
+    <!-- TAB: Payment Plan -->
+    <div class="tab-panel" id="panel-payment">
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:1rem">Monthly cost planning based on typical construction payment schedules in India.</div>
+      <div class="payment-grid" id="payGrid"></div>
+    </div>
+
+    <!-- TAB: Scenarios -->
+    <div class="tab-panel" id="panel-scenarios">
+      <div style="font-size:12px;color:var(--tx2);margin-bottom:1rem">Compare how your project cost changes across different quality levels for the same plot and configuration.</div>
+      <div class="chart-card" style="margin-bottom:1rem">
+        <div class="chart-title">Cost Comparison (₹ Lakhs)</div>
+        <div style="position:relative;height:200px"><canvas id="scChart" role="img" aria-label="Scenario comparison bar chart"></canvas></div>
+      </div>
+      <div style="overflow-x:auto"><table class="scenario-table" id="scTable"></table></div>
+    </div>
+
+    <!-- TAB: Contractors -->
+    <div class="tab-panel" id="panel-contractors">
+      <div class="con-grid" id="conGrid"></div>
+    </div>
+
+    <!-- TAB: Insights -->
+    <div class="tab-panel" id="panel-insights">
+      <div class="ins-grid" id="insGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CITY RATES -->
+<section id="cities" class="section alt">
+  <div class="sec-head center"><span class="sec-label">Market Data</span><h2 class="sec-h2">City-wise Base Rates</h2><p class="sec-sub">Standard quality residential construction rates. Click a city to pre-fill the estimator.</p></div>
+  <div class="city-grid" id="citygrid"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="brand">⚡ Struct<span>ra</span></div>
+  <p>© 2025 Structra — Intelligent Construction Cost Platform<br>
+  Estimates are indicative. Always consult a licensed structural engineer and get multiple contractor quotes.<br>
+  Built by Adarsh · DPGU University, Pune · Computer Science Engineering</p>
+</footer>
+
+<div class="loader" id="loader"><div class="spin"></div><div class="loader-text" id="loaderText">Running Structra Analysis...</div></div>
+<div class="toast" id="toast"><span class="toast-icon" id="tic">✅</span><span class="toast-text" id="ttx">Done!</span></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const CR={nagpur:{r:1800,n:'Nagpur',reg:'Maharashtra',t:'Tier 2'},pune:{r:2200,n:'Pune',reg:'Maharashtra',t:'Tier 1'},mumbai:{r:3000,n:'Mumbai',reg:'Maharashtra',t:'Metro'},delhi:{r:2800,n:'Delhi',reg:'Delhi NCR',t:'Metro'},bangalore:{r:2600,n:'Bangalore',reg:'Karnataka',t:'Metro'},hyderabad:{r:2000,n:'Hyderabad',reg:'Telangana',t:'Tier 1'},chennai:{r:2100,n:'Chennai',reg:'Tamil Nadu',t:'Tier 1'},ahmedabad:{r:1700,n:'Ahmedabad',reg:'Gujarat',t:'Tier 1'},kolkata:{r:1900,n:'Kolkata',reg:'W. Bengal',t:'Metro'},jaipur:{r:1600,n:'Jaipur',reg:'Rajasthan',t:'Tier 2'},lucknow:{r:1500,n:'Lucknow',reg:'U.P.',t:'Tier 2'},surat:{r:1750,n:'Surat',reg:'Gujarat',t:'Tier 2'},bhopal:{r:1550,n:'Bhopal',reg:'M.P.',t:'Tier 2'},coimbatore:{r:1850,n:'Coimbatore',reg:'Tamil Nadu',t:'Tier 2'},indore:{r:1600,n:'Indore',reg:'M.P.',t:'Tier 2'}};
+const QR={basic:{mn:1400,mx:1800,mid:1600},standard:{mn:1800,mx:2500,mid:2150},premium:{mn:2500,mx:4000,mid:3250}};
+const TM={residential:1.0,commercial:1.15,warehouse:0.85};
+const BR={'Cement':{p:.12,c:'#F59E0B'},'Steel':{p:.18,c:'#3B82F6'},'Bricks':{p:.11,c:'#EF4444'},'Sand & Gravel':{p:.10,c:'#8B5CF6'},'Labour':{p:.28,c:'#10B981'},'Finishing':{p:.21,c:'#06B6D4'}};
+const SOIL={normal:{mult:1.0,label:'Normal soil',note:null},rocky:{mult:1.08,label:'Rocky soil',note:'Rocky soil increases foundation/excavation costs by ~8%. Drilling and blasting may be required.'},loose:{mult:1.15,label:'Loose/sandy soil',note:'Loose soil requires deeper foundations and additional reinforcement, increasing foundation cost by ~15%.'},expansive:{mult:1.18,label:'Black cotton soil',note:'Expansive black cotton soil is highly problematic. Requires special foundation design (pile/raft), adding ~18% to foundation costs.'}};
+const LOC={urban:{mult:1.0,l:'Urban'},suburban:{mult:0.95,l:'Suburban'},rural:{mult:0.88,l:'Rural'}};
+const ROAD={good:{mult:1.0},moderate:{mult:1.02},poor:{mult:1.05}};
+const BRICK={red:{mult:1.0,n:'Red Bricks'},flyash:{mult:0.92,n:'Fly Ash Bricks'},aac:{mult:0.95,n:'AAC Blocks'}};
+const CDB={nagpur:[{n:'Ravi Constructions Pvt Ltd',i:'RC',r:4.8,rv:142,ph:'9876543210',rng:'₹1,750–₹1,900/sqft',e:18,pr:320,sp:['Residential','Commercial']},{n:'Shiva Builders Pvt Ltd',i:'SB',r:4.6,rv:89,ph:'9123456789',rng:'₹1,800–₹2,000/sqft',e:12,pr:210,sp:['Residential']},{n:'Prime Infra Group',i:'PI',r:4.5,rv:67,ph:'9988776655',rng:'₹1,700–₹1,950/sqft',e:10,pr:180,sp:['Commercial']}],pune:[{n:'Konark Constructions',i:'KC',r:4.9,rv:315,ph:'9345678901',rng:'₹2,200–₹2,500/sqft',e:28,pr:600,sp:['Premium','Residential']},{n:'Pune Urban Developers',i:'PU',r:4.7,rv:203,ph:'9234567890',rng:'₹2,100–₹2,400/sqft',e:22,pr:450,sp:['Residential','Commercial']},{n:'Aakash Build Co.',i:'AB',r:4.4,rv:98,ph:'9456789012',rng:'₹2,000–₹2,300/sqft',e:9,pr:155,sp:['Residential']}],mumbai:[{n:'Oberoi Realty Works',i:'OR',r:4.9,rv:428,ph:'9567890123',rng:'₹2,900–₹3,200/sqft',e:35,pr:800,sp:['Premium','Commercial']},{n:'Lodha Construction',i:'LC',r:4.8,rv:512,ph:'9678901234',rng:'₹3,000–₹3,500/sqft',e:40,pr:1200,sp:['Premium','Residential']},{n:'Mumbai Metro Builders',i:'MM',r:4.5,rv:187,ph:'9789012345',rng:'₹2,800–₹3,100/sqft',e:15,pr:290,sp:['Residential']}],delhi:[{n:'Delhi Master Builders',i:'DM',r:4.7,rv:234,ph:'9890123456',rng:'₹2,700–₹3,000/sqft',e:20,pr:410,sp:['Commercial','Residential']},{n:'NCR Infra Solutions',i:'NI',r:4.6,rv:176,ph:'9901234567',rng:'₹2,600–₹2,900/sqft',e:14,pr:280,sp:['Commercial']}],bangalore:[{n:'Brigade Constructions',i:'BC',r:4.8,rv:389,ph:'9012345678',rng:'₹2,500–₹2,800/sqft',e:30,pr:750,sp:['Residential','Premium']},{n:'Prestige Build Works',i:'PW',r:4.7,rv:267,ph:'9123450987',rng:'₹2,600–₹3,000/sqft',e:25,pr:520,sp:['Premium','Residential']}]};
+const DCON=[{n:'National Build Corp',i:'NB',r:4.6,rv:890,ph:'1800-BUILDER',rng:'City-based pricing',e:25,pr:2000,sp:['All Types']},{n:'IndiaConstruct Pro',i:'IC',r:4.4,rv:567,ph:'1800-INFRA',rng:'City-based pricing',e:18,pr:1400,sp:['Residential','Warehouse']},{n:'Buildtech Solutions',i:'BS',r:4.3,rv:342,ph:'1800-BUILD',rng:'City-based pricing',e:12,pr:800,sp:['Commercial']}];
+const FEATURES=['⚡ Reality-layer pricing','🌍 Urban vs Rural multiplier','🪨 Soil type analysis','🧱 Material quantities','📅 Construction timeline','💸 Monthly payment plan','⚖️ Scenario comparison','💡 AI optimization tips','📊 Structra Score™','👷 Contractor matching','📥 Export report','🏗️ 6 cost categories','🏙️ 15+ cities','⚠️ Hidden cost warnings'];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const S={unit:'sqft',btype:'residential',qual:'standard',brick:'red',step:1,est:null,charts:{d:null,sc:null},dark:true};
+
+/* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+const fi=id=>document.getElementById(id);
+const fI=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const fL=n=>{if(n>=10000000)return(n/10000000).toFixed(2)+' Cr';if(n>=100000)return(n/100000).toFixed(2)+' L';return Math.round(n).toLocaleString('en-IN')};
+function sc(id){fi(id).scrollIntoView({behavior:'smooth'})}
+function toast(msg,ic='✅',dur=3000){fi('tic').textContent=ic;fi('ttx').textContent=msg;const t=fi('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur)}
+function loader(on,msg='Running Structra Analysis...'){fi('loaderText').textContent=msg;fi('loader').classList.toggle('show',on)}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderCities();renderFeaturePills();
+  fi('budgetSlider').value=5000000;
+  fi('sliderLabel').textContent=fL(5000000);
+});
+
+function renderFeaturePills(){
+  fi('fpillsRow').innerHTML=FEATURES.map(f=>`<div class="fpill">${f}</div>`).join('');
+}
+
+function renderCities(){
+  const tc={'Metro':'#F59E0B','Tier 1':'#6366F1','Tier 2':'#A855F7'};
+  fi('citygrid').innerHTML=Object.entries(CR).map(([k,c])=>`
+    <div class="city-card" onclick="fi('city').value='${k}';sc('estimator');toast('${c.n} selected','📍')">
+      <div><div class="city-name">${c.n}</div><div class="city-region">${c.reg}</div></div>
+      <div><div class="city-rate">₹${c.r.toLocaleString('en-IN')}</div><div class="city-tier" style="color:${tc[c.t]||'var(--tx3)'}">● ${c.t}</div></div>
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════ */
+function toggleTheme(){S.dark=!S.dark;document.body.classList.toggle('light',!S.dark);fi('themeBtn').textContent=S.dark?'🌙':'☀️'}
+
+/* ═══════════════════════════════════════════
+   FORM CONTROLS
+═══════════════════════════════════════════ */
+function setUnit(u){S.unit=u;fi('btnSqft').className='utbtn'+(u==='sqft'?' on':'');fi('btnSqm').className='utbtn'+(u==='sqm'?' on':'')}
+function selT(t){S.btype=t;['residential','commercial','warehouse'].forEach(x=>fi('type-'+x).className='sel-card'+(x===t?' t-on':''))}
+function selQ(q){S.qual=q;['basic','standard','premium'].forEach(x=>fi('q-'+x).className='sel-card'+(x===q?' q-on':''))}
+function selB(b){S.brick=b;['red','flyash','aac'].forEach(x=>fi('b-'+x).className='sel-card'+(x===b?' s-on':''))}
+
+/* ═══════════════════════════════════════════
+   STEP NAV
+═══════════════════════════════════════════ */
+function goS(n){
+  if(n>1){const ps=parseFloat(fi('plotSize').value);if(!ps||ps<=0){toast('Enter a valid plot size','⚠️');return}}
+  [1,2,3].forEach(i=>fi('fs'+i).style.display=i===n?'':'none');
+  upProg(n);S.step=n;sc('estimator');
+}
+function upProg(n){
+  [1,2,3,4].forEach(i=>{
+    const c=fi('pc'+i),l=fi('pl'+i);
+    if(i<n){c.className='pt-circ done';c.textContent='✓';l.className='pt-lbl done'}
+    else if(i===n){c.className='pt-circ active';c.textContent=i;l.className='pt-lbl active'}
+    else{c.className='pt-circ';c.textContent=i;l.className='pt-lbl'}
+  });
+  [1,2,3].forEach(i=>fi('pln'+i).className='pt-line'+(i<n?' done':''));
+}
+
+/* ═══════════════════════════════════════════
+   BUDGET PLANNER
+═══════════════════════════════════════════ */
+function calcBudgetPlan(b){
+  const city=fi('city').value,qr=QR[S.qual];
+  const soilM=SOIL[fi('soilType').value||'normal'].mult;
+  const locM=LOC[fi('locType').value||'urban'].mult;
+  let rate=CR[city].r*TM[S.btype]*(qr.mid/2150)*soilM*locM*BRICK[S.brick].mult;
+  rate=Math.round(Math.min(Math.max(rate,qr.mn),qr.mx));
+  const ps=parseFloat(fi('plotSize').value)||1500;
+  const psqft=S.unit==='sqm'?ps*10.7639:ps;
+  const bup=parseFloat(fi('builtupPct').value)||75;
+  const apf=psqft*bup/100;
+  const maxA=Math.floor(b/rate);
+  const maxF=Math.max(1,Math.floor(maxA/apf));
+  const qual=rate<=1800?'Basic':rate<=2500?'Standard':'Premium';
+  fi('bmaxA').textContent=maxA.toLocaleString('en-IN');
+  fi('bmaxF').textContent=maxF;
+  fi('bqual').textContent=qual;
+  fi('budRows').style.display='grid';
+  fi('btip').style.display='';
+  fi('btip').textContent=`At ₹${rate.toLocaleString('en-IN')}/sqft after all adjustments, your budget supports ${maxF} floor(s) of ${Math.round(apf).toLocaleString('en-IN')} sqft each.`;
+}
+function onBudgetSlide(v){fi('sliderLabel').textContent=fL(v);fi('budgetInput').value=v;calcBudgetPlan(parseFloat(v))}
+function onBudgetType(v){const n=parseFloat(v);if(!n)return;if(n>=500000&&n<=50000000)fi('budgetSlider').value=n;fi('sliderLabel').textContent=fL(n);calcBudgetPlan(n)}
+
+/* ═══════════════════════════════════════════
+   MAIN CALCULATION
+═══════════════════════════════════════════ */
+function runCalc(){
+  loader(true);
+  const msgs=['Applying reality layer...','Calculating material quantities...','Building timeline...','Scoring optimizations...','Finalizing your report...'];
+  let mi=0;const mi_iv=setInterval(()=>{if(mi<msgs.length-1){mi++;fi('loaderText').textContent=msgs[mi]}},400);
+  setTimeout(()=>{
+    clearInterval(mi_iv);
+    try{
+      const psR=parseFloat(fi('plotSize').value)||1500;
+      const psqft=S.unit==='sqm'?psR*10.7639:psR;
+      const bup=parseFloat(fi('builtupPct').value)||75;
+      const floors=parseInt(fi('floors').value)||2;
+      const city=fi('city').value;
+      const qr=QR[S.qual];
+      const soil=SOIL[fi('soilType').value||'normal'];
+      const loc=LOC[fi('locType').value||'urban'];
+      const road=ROAD[fi('roadAccess').value||'good'];
+      const brick=BRICK[S.brick];
+      const cp=parseFloat(fi('cementPrice').value)||380;
+      const sp=parseFloat(fi('steelPrice').value)||65;
+      const lp=parseFloat(fi('labourCost').value)||750;
+      const custAdj=((cp-380)/380*BR['Cement'].p)+((sp-65)/65*BR['Steel'].p)+((lp-750)/750*BR['Labour'].p);
+
+      let baseRate=CR[city].r*TM[S.btype]*(qr.mid/2150);
+      baseRate=Math.min(Math.max(baseRate,qr.mn),qr.mx);
+      const realityMult=soil.mult*loc.mult*road.mult*brick.mult*(1+custAdj);
+      let adjRate=Math.round(baseRate*realityMult);
+      adjRate=Math.min(Math.max(adjRate,qr.mn),qr.mx+1000);
+
+      const ba=psqft*bup/100;
+      const ta=ba*floors;
+      const tc=Math.round(ta*adjRate);
+      const cmin=Math.round(ta*qr.mn);
+      const cmax=Math.round(ta*qr.mx);
+
+      const bk={};let alloc=0;
+      Object.keys(BR).forEach((cat,i,arr)=>{
+        const amt=i===arr.length-1?tc-alloc:Math.round(tc*BR[cat].p);
+        bk[cat]={amount:amt,color:BR[cat].color};
+        if(i<arr.length-1)alloc+=amt;
+      });
+
+      // Reality impact breakdown
+      const soilImpact=soil.mult>1?Math.round(tc*(soil.mult-1)/soil.mult):0;
+      const locLabel=loc.l;
+
+      // Structra Score: 0-100 based on optimization opportunities
+      let score=100;
+      if(S.qual==='premium')score-=15;
+      if(S.qual==='basic')score+=5;
+      if(soil.mult>1)score-=Math.round((soil.mult-1)*80);
+      if(loc.mult<1)score+=Math.round((1-loc.mult)*20);
+      if(road.mult>1)score-=5;
+      if(S.brick==='flyash')score+=5;
+      if(S.brick==='aac')score+=3;
+      if(bup>80)score-=8;
+      score=Math.min(98,Math.max(35,score));
+
+      S.est={psqft,ba,ta,floors,adjRate,tc,cmin,cmax,bk,city,soil,loc,soilImpact,locLabel,score,bup,qr,brick};
+      loader(false);
+      renderResults();
+      fi('results').style.display='';
+      sc('results');
+      upProg(4);
+      toast('Structra Analysis complete!','⚡');
+    }catch(e){loader(false);toast('Calculation error. Check your inputs.','❌')}
+  },2200);
+}
+
+/* ═══════════════════════════════════════════
+   RENDER RESULTS
+═══════════════════════════════════════════ */
+function renderResults(){
+  const e=S.est;
+  const city=CR[e.city];
+  fi('rsub').textContent=`${city.n} · ${S.btype} · ${S.qual} quality · ${e.soil.label} · ${e.locLabel} · ${Math.round(e.ta).toLocaleString('en-IN')} sqft`;
+
+  // Badges
+  fi('cbadges').innerHTML=[city.n,S.btype,S.qual,`${e.floors} floors`,BRICK[S.brick].n,e.locLabel].map(t=>`<span class="c-badge">${t}</span>`).join('');
+
+  // Mini bar
+  const cats=Object.keys(e.bk);
+  fi('miniBars').innerHTML=`<div style="font-size:10px;color:rgba(255,255,255,.3);margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700">Cost breakdown</div>
+  <div class="c-bk-bar">${cats.map(c=>`<div class="c-bk-seg" style="width:${Math.round(e.bk[c].amount/e.tc*100)}%;background:${e.bk[c].color}" title="${c}: ${fL(e.bk[c].amount)}"></div>`).join('')}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">${cats.map(c=>`<span style="font-size:10px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:2px;background:${e.bk[c].color};display:inline-block"></span>${c.split(' ')[0]}</span>`).join('')}</div>`;
+
+  fi('crange').textContent=`Range: ${fL(e.cmin)} – ${fL(e.cmax)}`;
+
+  // Metrics
+  fi('mrow').innerHTML=[
+    {ic:'📐',v:Math.round(e.ta).toLocaleString('en-IN')+' sqft',l:'Total Built-up Area'},
+    {ic:'💰',v:'₹'+e.adjRate.toLocaleString('en-IN'),l:'Effective Rate/sqft'},
+    {ic:'🏢',v:e.floors,l:'Floors'},
+    {ic:'📊',v:fL(e.tc/e.floors),l:'Cost per Floor'},
+    {ic:'🏗️',v:Math.round(e.ba).toLocaleString('en-IN')+' sqft',l:'Area per Floor'},
+    {ic:'⚠️',v:fL(e.tc*0.12),l:'Contingency 12%'},
+  ].map(m=>`<div class="m-card"><span class="m-ic">${m.ic}</span><span class="m-val">${m.v}</span><div class="m-lbl">${m.l}</div></div>`).join('');
+
+  // Soil note
+  if(e.soil.note){fi('soilNote').style.display='';fi('soilNote').innerHTML=`<strong>⚠️ Soil Condition Alert:</strong> ${e.soil.note} <strong>Additional cost impact: +${fL(e.soilImpact)}</strong>`}
+  else fi('soilNote').style.display='none';
+
+  // Score gauge
+  renderScore(e.score);
+
+  // All panels
+  renderBreakdown();
+  renderQuantities();
+  renderTimeline();
+  renderPayment();
+  renderScenarios();
+  renderContractors();
+  renderInsights();
+  animCost();
+  setTimeout(renderDoughnut,150);
+}
+
+function animCost(){
+  const e=S.est;const el=fi('cticker');let cur=0;
+  const iv=setInterval(()=>{cur=Math.min(cur+e.tc/100,e.tc);el.textContent=fI(cur);if(cur>=e.tc){clearInterval(iv);el.textContent=fI(e.tc)}},16);
+}
+
+function renderScore(score){
+  const circumference=351.86;
+  const offset=circumference-(circumference*score/100);
+  const arc=fi('scoreArc');arc.style.strokeDashoffset=circumference;
+  setTimeout(()=>arc.style.strokeDashoffset=offset,100);
+  let n=0;const iv=setInterval(()=>{n=Math.min(n+2,score);fi('scoreNum').textContent=n;if(n>=score)clearInterval(iv)},20);
+  const col=score>=80?'#10B981':score>=60?'#6366F1':score>=40?'#F59E0B':'#EF4444';
+  fi('scoreNum').style.color=col;
+  const desc=score>=80?'Excellent optimization — your configuration is highly cost-efficient.':score>=60?'Good configuration. A few tweaks can unlock further savings.':score>=40?'Moderate score. Consider optimization suggestions in the Insights tab.':'Your configuration has significant cost-saving opportunities. Check Insights.';
+  fi('scoreDesc').textContent=desc;
+  const tips=[];
+  if(S.brick!=='flyash')tips.push({ic:'✓',t:'Switch to fly ash bricks to save ~8% on brick cost'});
+  if(S.qual==='premium')tips.push({ic:'✓',t:'Consider standard quality to save up to 20%'});
+  if(parseFloat(fi('builtupPct').value)>80)tips.push({ic:'✓',t:'Reduce built-up % to below 80% for better structure'});
+  if(S.est.soil.mult>1)tips.push({ic:'⚠',t:'Soil condition increases foundation cost — consult engineer'});
+  if(tips.length===0)tips.push({ic:'★',t:'Configuration is well-optimized for your budget'});
+  fi('scoreTips').innerHTML=tips.slice(0,3).map(t=>`<div class="score-tip"><span>${t.ic}</span><span>${t.t}</span></div>`).join('');
+}
+
+/* ── Breakdown ───────────────────────────────── */
+function renderBreakdown(){
+  const e=S.est;
+  fi('bklist').innerHTML=Object.entries(e.bk).map(([cat,d])=>{
+    const pct=Math.round(d.amount/e.tc*100);
+    return`<div class="bk-item">
+      <div class="bk-top"><span class="bk-name">${cat}</span><span class="bk-pct" style="color:${d.color}">${pct}%</span></div>
+      <div class="bk-track"><div class="bk-fill" style="background:${d.color}" data-p="${pct}"></div></div>
+      <div class="bk-amount">${fL(d.amount)}</div>
+    </div>`;
+  }).join('');
+  setTimeout(()=>document.querySelectorAll('.bk-fill').forEach(b=>b.style.width=b.dataset.p+'%'),100);
+  fi('dlegend').innerHTML=Object.entries(e.bk).map(([k,d])=>`<span style="display:flex;align-items:center;gap:3px"><span style="width:8px;height:8px;border-radius:2px;background:${d.color};display:inline-block"></span>${k}</span>`).join('');
+}
+
+function renderDoughnut(){
+  const e=S.est;if(!e)return;
+  if(S.charts.d)S.charts.d.destroy();
+  const lb=Object.keys(e.bk),vl=lb.map(k=>e.bk[k].amount),cl=lb.map(k=>e.bk[k].color);
+  S.charts.d=new Chart(fi('dChart'),{type:'doughnut',data:{labels:lb,datasets:[{data:vl,backgroundColor:cl,borderWidth:2,borderColor:'#111827',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fL(ctx.raw)} (${Math.round(ctx.raw/e.tc*100)}%)`}}}}});
+}
+
+/* ── Material Quantities ─────────────────────── */
+function renderQuantities(){
+  const e=S.est;const ta=e.ta;
+  // CPWD-based material estimation formulas
+  const cBags=Math.round(ta*0.4); // ~0.4 bags per sqft for RCC structure
+  const steelKg=Math.round(ta*4.5); // ~4.5 kg/sqft for RCC
+  const bricks=Math.round(ta*(S.btype==='warehouse'?5:8)); // per sqft
+  const sandCuft=Math.round(ta*1.5);
+  const aggregate=Math.round(ta*0.9);
+  const paint=Math.round(ta*0.12); // litres
+  const tiles=Math.round(ta*1.15); // sqft with wastage
+  const water=Math.round(ta*50); // litres total
+  const qty=[
+    {ic:'🏗️',bg:'var(--indigo3)',n:'Cement Bags',v:`${cBags.toLocaleString('en-IN')}`,unit:'bags (50kg each)',f:`${ta.toFixed(0)} sqft × 0.40 bags`},
+    {ic:'⚙️',bg:'var(--blue3)',n:'Steel / TMT Bars',v:`${(steelKg/1000).toFixed(2)}`,unit:'metric tonnes',f:`${ta.toFixed(0)} sqft × 4.5 kg`},
+    {ic:'🧱',bg:'rgba(239,68,68,.1)',n:BRICK[S.brick].n,v:bricks.toLocaleString('en-IN'),unit:'bricks / blocks',f:`${ta.toFixed(0)} sqft × ${S.btype==='warehouse'?5:8} units`},
+    {ic:'⛏️',bg:'var(--purple3)',n:'River Sand',v:`${sandCuft.toLocaleString('en-IN')}`,unit:'cubic feet',f:`${ta.toFixed(0)} sqft × 1.5 cuft`},
+    {ic:'🪨',bg:'rgba(16,185,129,.1)',n:'Coarse Aggregate',v:`${aggregate.toLocaleString('en-IN')}`,unit:'cubic feet',f:`${ta.toFixed(0)} sqft × 0.9 cuft`},
+    {ic:'🎨',bg:'rgba(245,158,11,.1)',n:`Paint & Primer`,v:`${paint.toLocaleString('en-IN')}`,unit:'litres (2 coats)',f:`Interior + exterior walls`},
+    {ic:'🔲',bg:'rgba(6,182,212,.1)',n:`Floor Tiles`,v:`${tiles.toLocaleString('en-IN')}`,unit:'sq ft (with 15% wastage)',f:`Floor area including wastage`},
+    {ic:'💧',bg:'rgba(59,130,246,.1)',n:`Water (Curing)`,v:`${Math.round(water/1000)}`,unit:'kilolitres estimated',f:`For construction + curing`},
+  ];
+  fi('qtyGrid').innerHTML=qty.map(q=>`<div class="qty-card"><div class="qty-icon" style="background:${q.bg}">${q.ic}</div><div><div class="qty-val">${q.v}</div><div class="qty-name">${q.n} (${q.unit})</div><div class="qty-formula">${q.f}</div></div></div>`).join('');
+}
+
+/* ── Timeline ────────────────────────────────── */
+function renderTimeline(){
+  const e=S.est;const f=e.floors;
+  const baseMonths=f<=1?5:f<=2?8:f<=4?12:16;
+  const soilBonus=e.soil.mult>1.1?2:e.soil.mult>1?1:0;
+  const total=baseMonths+soilBonus;
+  fi('tlTotal').textContent=`Estimated duration: ${total}–${total+2} months for your ${f}-floor ${S.btype}`;
+  fi('tlTotalBadge').textContent=`${total}–${total+2} months total`;
+  const phases=[
+    {name:'Site Preparation & Foundation',months:'Month 1–'+Math.ceil(total*.2),color:'#F59E0B',dot:'#F59E0B',pct:.12,tasks:'Site clearing, soil testing, excavation, PCC, RCC foundation, anti-termite treatment',note:e.soil.mult>1?`⚠️ ${e.soil.label} may require extended foundation work — add 2–3 weeks`:''},
+    {name:'Plinth & Basement Structure',months:'Month '+Math.ceil(total*.2)+'–'+Math.ceil(total*.35),color:'#6366F1',dot:'#6366F1',pct:.10,tasks:'Plinth beam, basement filling, DPC (Damp Proof Course), plinth level masonry'},
+    {name:'Superstructure (Floors)',months:'Month '+Math.ceil(total*.35)+'–'+Math.ceil(total*.65),color:'#3B82F6',dot:'#3B82F6',pct:.30,tasks:`Column casting, slab formwork, beam casting, brick masonry — repeated for all ${f} floor(s). Includes shuttering, reinforcement, concrete pouring.`},
+    {name:'Roof Slab & Overhead Work',months:'Month '+Math.ceil(total*.65)+'–'+Math.ceil(total*.75),color:'#8B5CF6',dot:'#8B5CF6',pct:.10,tasks:'Top floor slab casting, overhead water tank, roof waterproofing, parapet wall'},
+    {name:'Finishing & Interiors',months:'Month '+Math.ceil(total*.75)+'–'+Math.ceil(total*.9),color:'#10B981',dot:'#10B981',pct:.30,tasks:'Internal plastering, flooring (tiles/marble), electrical wiring, plumbing, painting, windows & doors, false ceiling if required'},
+    {name:'Final Fittings & Handover',months:'Month '+Math.ceil(total*.9)+'–'+total,color:'#06B6D4',dot:'#06B6D4',pct:.08,tasks:'Sanitary fittings, electrical fixtures, external plaster, compound wall, driveway, landscaping, final inspection & corrections'},
+  ];
+  fi('tlWrap').innerHTML=phases.map((ph,i)=>`
+    <div class="tl-phase">
+      <div class="tl-left">
+        <div class="tl-dot" style="border-color:${ph.dot};background:${ph.dot}40"></div>
+        ${i<phases.length-1?`<div class="tl-line" style="background:linear-gradient(to bottom,${ph.dot},${phases[i+1].dot}40)"></div>`:''}
+      </div>
+      <div class="tl-content">
+        <div class="tl-phase-name">${ph.name}</div>
+        <span class="tl-months" style="background:${ph.dot}20;color:${ph.dot}">${ph.months}</span>
+        <div class="tl-tasks">${ph.tasks}</div>
+        ${ph.note?`<div style="font-size:11px;color:var(--amber);margin-top:5px">${ph.note}</div>`:''}
+        <div class="tl-cost-badge">Est. cost: ${fL(e.tc*ph.pct)}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── Payment Plan ────────────────────────────── */
+function renderPayment(){
+  const e=S.est;
+  const payments=[
+    {phase:'Foundation & Site Prep',months:'Month 1–2',pct:.15,color:'#F59E0B'},
+    {phase:'Plinth & Basement',months:'Month 2–3',pct:.10,color:'#6366F1'},
+    {phase:'Structure (Ground to Top Floor)',months:'Month 3–'+(3+e.floors),pct:.30,color:'#3B82F6'},
+    {phase:'Roof & Overhead Works',months:'Month '+(3+e.floors),pct:.10,color:'#8B5CF6'},
+    {phase:'Plastering & MEP Works',months:'Month '+(4+e.floors)+'–'+(6+e.floors),pct:.20,color:'#10B981'},
+    {phase:'Finishing & Fittings',months:'Month '+(6+e.floors)+' onwards',pct:.15,color:'#06B6D4'},
+  ];
+  fi('payGrid').innerHTML=payments.map(p=>`
+    <div class="pay-row">
+      <div class="pay-left"><div class="pay-phase">${p.phase}</div><div class="pay-months">${p.months}</div></div>
+      <div class="pay-right"><div class="pay-amount">${fL(e.tc*p.pct)}</div><div class="pay-pct">${Math.round(p.pct*100)}% of total</div></div>
+      <div style="width:100%"><div class="pay-bar-wrap"><div class="pay-bar" style="background:${p.color};width:${Math.round(p.pct*100)}%"></div></div></div>
+    </div>`).join('')+`
+  <div class="pay-total-row">
+    <div class="pay-total-label">Total Project Cost</div>
+    <div class="pay-total-val">${fI(e.tc)}</div>
+  </div>
+  <div style="font-size:11px;color:var(--tx3);margin-top:8px;padding:0 4px">💡 Keep a separate 10–12% contingency fund (${fL(e.tc*.11)}) for surprises. Never release full payment before milestone completion.</div>`;
+}
+
+/* ── Scenarios ────────────────────────────────── */
+function renderScenarios(){
+  const e=S.est;
+  const sc2=[
+    {q:'basic',label:'Basic',emoji:'🧱',color:'#94A3B8'},
+    {q:'standard',label:'Standard',emoji:'🏗️',color:'#6366F1'},
+    {q:'premium',label:'Premium',emoji:'✨',color:'#A855F7'},
+  ];
+  const rows=sc2.map(s=>{
+    const qr=QR[s.q];
+    const rate=Math.round(Math.min(Math.max(CR[e.city].r*TM[S.btype]*(qr.mid/2150)*e.soil.mult*e.loc.mult*BRICK[S.brick].mult,qr.mn),qr.mx));
+    const cost=Math.round(e.ta*rate);
+    const isCur=s.q===S.qual;
+    const diff=cost-e.tc;
+    return{...s,rate,cost,isCur,diff};
+  });
+  if(S.charts.sc)S.charts.sc.destroy();
+  S.charts.sc=new Chart(fi('scChart'),{
+    type:'bar',
+    data:{labels:rows.map(r=>`${r.emoji} ${r.label}`),datasets:[{data:rows.map(r=>parseFloat((r.cost/100000).toFixed(1))),backgroundColor:rows.map(r=>r.isCur?r.color:r.color+'80'),borderRadius:6,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ₹${ctx.raw.toFixed(1)} L`}}},scales:{x:{ticks:{color:'#94A3B8'},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#94A3B8',callback:v=>v+'L'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+  fi('scTable').innerHTML=`<thead><tr><th>Quality</th><th>Rate/sqft</th><th>Total Cost</th><th>vs Your Choice</th><th>Time Est.</th></tr></thead><tbody>${
+    rows.map(r=>`<tr class="${r.isCur?'sc-highlight':''}">
+      <td><span class="sc-badge" style="background:${r.color}20;color:${r.color};border:1px solid ${r.color}40">${r.emoji} ${r.label}${r.isCur?' (current)':''}</span></td>
+      <td class="sc-cost" style="color:${r.color}">₹${r.rate.toLocaleString('en-IN')}</td>
+      <td class="sc-cost">${fL(r.cost)}</td>
+      <td>${r.isCur?'<span class="sc-tag" style="background:var(--indigo3);color:var(--indigo2)">Your choice</span>':r.diff<0?`<span class="sc-tag" style="background:var(--green3);color:var(--green2)">Save ${fL(Math.abs(r.diff))}</span>`:`<span class="sc-tag" style="background:rgba(239,68,68,.1);color:#FCA5A5">+${fL(r.diff)}</span>`}</td>
+      <td style="color:var(--tx3);font-size:12px">${r.q==='basic'?'4–6 mo.':r.q==='standard'?'6–10 mo.':'10–16 mo.'}</td>
+    </tr>`).join('')
+  }</tbody>`;
+}
+
+/* ── Contractors ──────────────────────────────── */
+function renderContractors(){
+  const city=S.est.city;const list=CDB[city]||DCON;
+  const cp=[['#1a2a6c','#b21f1f'],['#134e5e','#71b280'],['#373b44','#4286f4'],['#0f2027','#203a43']];
+  fi('conGrid').innerHTML=list.map((c,i)=>{
+    const[c1,c2]=cp[i%cp.length];
+    const stars='★'.repeat(Math.floor(c.r))+(c.r%1>=.5?'½':'');
+    return`<div class="con-card">
+      <div class="con-av" style="background:linear-gradient(135deg,${c1},${c2})">${c.i}</div>
+      <div style="flex:1">
+        <div class="con-name">${c.n}</div>
+        <div class="con-meta">📞 ${c.ph} · ${c.e} yrs exp · ${c.pr.toLocaleString('en-IN')} projects</div>
+        <div class="con-stars">${stars} <span style="color:var(--tx3);font-size:11px">${c.r}/5 (${c.rv} reviews)</span></div>
+        <div class="con-price">₹ ${c.rng}</div>
+        <div class="con-tags">${c.sp.map(s=>`<span class="ctag">${s}</span>`).join('')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <span class="vbadge">✓ Verified</span>
+        <a href="https://wa.me/91${c.ph.replace(/\D/g,'')}?text=Hi, I got your contact from Structra. I need a quote for a ${S.btype} construction project in ${CR[S.est.city].n}." target="_blank" style="font-size:10px;padding:4px 10px;border-radius:50px;background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.2);font-weight:700;text-decoration:none;white-space:nowrap">💬 WhatsApp</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Insights ─────────────────────────────────── */
+function renderInsights(){
+  const e=S.est;
+  const sorted=Object.entries(e.bk).sort((a,b)=>b[1].amount-a[1].amount);
+  const topCat=sorted[0][0],topPct=Math.round(sorted[0][1].amount/e.tc*100);
+  const lq=S.qual==='premium'?'standard':'basic';
+  const lc=Math.round(e.ta*QR[lq].mid);
+  const saving=e.tc-lc;
+  const save10pct=Math.round(e.tc*.10);
+  const saveFlyAsh=S.brick!=='flyash'?Math.round(e.bk['Bricks'].amount*.08):0;
+  const saveArea8=Math.round(e.tc*0.08);
+  const typeTips={residential:'RCC framing over load-bearing walls gives better structural integrity. Consider using HYSD bars instead of mild steel for column reinforcement.',commercial:'Prefabricated steel structures can cut commercial build time and cost by 15–20%. Consider AAC blocks for internal partition walls.',warehouse:'Pre-engineered steel buildings (PEB) are 25–30% cheaper than RCC warehouses and erect in weeks, not months.'};
+  const ins=[
+    {t:'info',ic:'📊',title:'Where your money goes',msg:`<strong>${topCat}</strong> is your largest cost driver at <strong>${topPct}%</strong> of total (${fL(sorted[0][1].amount)}). Labour at 28% is typically the highest variable cost in Indian construction.`},
+    S.qual!=='basic'?{t:'saving',ic:'📉',title:'Quality switch opportunity',msg:`Switching from <strong>${S.qual}</strong> to <strong>${lq}</strong> quality saves approximately <strong>${fL(saving)}</strong> — that's ${Math.round(saving/e.tc*100)}% of your total cost.`,saving:`Potential saving: ${fL(saving)}`}:null,
+    {t:'saving',ic:'📐',title:'Area reduction impact',msg:`Reducing built-up area % by <strong>8%</strong> would save approximately <strong>${fL(saveArea8)}</strong>. Consider whether you need all the built-up area on every floor.`,saving:`Potential saving: ${fL(saveArea8)}`},
+    S.brick!=='flyash'?{t:'saving',ic:'🧱',title:'Fly ash bricks vs red bricks',msg:`Switching to <strong>fly ash bricks</strong> saves ~8% on brick cost (<strong>${fL(saveFlyAsh)}</strong>). They are stronger, more eco-friendly, and have better thermal insulation.`,saving:`Potential saving: ${fL(saveFlyAsh)}`}:null,
+    {t:'tip',ic:'🏗️',title:'Smart construction tip',msg:typeTips[S.btype]},
+    e.soil.mult>1?{t:'risk',ic:'⚠️',title:'Soil condition risk',msg:`<strong>${e.soil.label}</strong> increases your foundation cost by approximately <strong>${fL(e.soilImpact)}</strong>. Get a soil test report (SBC test) before finalizing design. This amount should be budgeted separately.`}:null,
+    {t:'warning',ic:'⚠️',title:'Contingency fund — mandatory',msg:`<strong>Never start construction without a 10–15% contingency reserve</strong> (₹${fL(e.tc*.12)}). Hidden costs include: govt approvals, material price spikes, design changes, and weather delays.`},
+    {t:'info',ic:'🏦',title:'Construction loan planning',msg:`For ${fL(e.tc)}, banks offer home construction loans at 8.5–9.5% p.a. A 20% down payment (${fL(e.tc*.20)}) is typically required. EMI on balance ≈ ₹${Math.round(e.tc*.8*0.009).toLocaleString('en-IN')}/month.`},
+    e.floors>1?{t:'tip',ic:'🏢',title:'Multi-floor cost efficiency',msg:`With ${e.floors} floors, each floor costs approximately <strong>${fL(e.tc/e.floors)}</strong>. Upper floors share foundation and structure costs — adding floors is more efficient per sqft than spreading over ground level.`}:null,
+    {t:'risk',ic:'🔌',title:'Hidden costs — plan for these',msg:`<strong>Often forgotten:</strong> Govt plan approval fees (₹50K–₹2L), water connection charges, electricity connection (₹30K–₹1L), scaffolding, watchman during construction, material storage shed, insurance.`},
+  ].filter(Boolean);
+  fi('insGrid').innerHTML=ins.map(i=>`<div class="ins-card ${i.t}"><div class="ins-ic">${i.ic}</div><div style="flex:1"><div class="ins-title">${i.title}</div><div class="ins-text">${i.msg}</div>${i.saving?`<div class="ins-saving">↓ ${i.saving}</div>`:''}</div></div>`).join('');
+}
+
+/* ── Tab system ───────────────────────────────── */
+function showT(n){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.t-btn').forEach(b=>b.classList.remove('on'));
+  fi('panel-'+n).classList.add('on');fi('tab-'+n).classList.add('on');
+  if(n==='breakdown')setTimeout(renderDoughnut,50);
+  if(n==='scenarios')setTimeout(()=>S.charts.sc&&S.charts.sc.update(),50);
+}
+
+/* ── Export ───────────────────────────────────── */
+function exportReport(){
+  const e=S.est;if(!e)return;
+  const city=CR[e.city].n;
+  const lines=[
+    '╔══════════════════════════════════════════════════════╗',
+    '║          STRUCTRA — CONSTRUCTION ANALYSIS REPORT      ║',
+    '╚══════════════════════════════════════════════════════╝',
+    `Generated: ${new Date().toLocaleString('en-IN')}`,`Structra Score™: ${e.score}/100`,'',
+    '── PROJECT DETAILS ──────────────────────────────────────',
+    `Total Estimated Cost  : ${fI(e.tc)}`,
+    `Cost Range            : ${fL(e.cmin)} – ${fL(e.cmax)}`,
+    `City                  : ${city}`,
+    `Building Type         : ${S.btype}`,
+    `Construction Quality  : ${S.qual}`,
+    `Brick Type            : ${BRICK[S.brick].n}`,
+    `Soil Condition        : ${e.soil.label}`,
+    `Location Type         : ${e.locLabel}`,
+    `Plot Size             : ${Math.round(e.psqft).toLocaleString('en-IN')} sqft`,
+    `Built-up Area/Floor   : ${Math.round(e.ba).toLocaleString('en-IN')} sqft`,
+    `Total Built-up Area   : ${Math.round(e.ta).toLocaleString('en-IN')} sqft`,
+    `Floors                : ${e.floors}`,
+    `Effective Rate/sqft   : ${fI(e.adjRate)}`,
+    e.soil.mult>1?`Soil Cost Impact      : +${fL(e.soilImpact)}`:'',
+    '','── COST BREAKDOWN ───────────────────────────────────────',
+    ...Object.entries(e.bk).map(([k,d])=>`${k.padEnd(18)}: ${fL(d.amount).padStart(12)}  (${Math.round(d.amount/e.tc*100)}%)`),
+    '','── MATERIAL QUANTITIES (ESTIMATED) ─────────────────────',
+    `Cement         : ${Math.round(e.ta*0.4).toLocaleString('en-IN')} bags (50kg each)`,
+    `Steel/TMT      : ${(e.ta*4.5/1000).toFixed(2)} metric tonnes`,
+    `Bricks/Blocks  : ${Math.round(e.ta*8).toLocaleString('en-IN')} units`,
+    `Sand           : ${Math.round(e.ta*1.5).toLocaleString('en-IN')} cubic feet`,
+    '','── FINANCIAL PLANNING ───────────────────────────────────',
+    `Contingency 12%: ${fL(e.tc*.12)}`,
+    `Total incl. contingency: ${fL(e.tc*1.12)}`,
+    '','── PAYMENT SCHEDULE ─────────────────────────────────────',
+    `Foundation (15%)       : ${fL(e.tc*.15)}`,
+    `Structure (40%)        : ${fL(e.tc*.40)}`,
+    `Finishing (30%)        : ${fL(e.tc*.30)}`,
+    `Fittings/Final (15%)   : ${fL(e.tc*.15)}`,
+    '','══════════════════════════════════════════════════════════',
+    'DISCLAIMER: This report is for planning purposes only.',
+    'Actual costs may vary ±10–15%. Always consult a licensed',
+    'structural engineer and get multiple contractor quotes.',
+    'Soil conditions can significantly impact foundation costs.',
+    '══════════════════════════════════════════════════════════',
+    '','Powered by Structra — structra.in (conceptual)',
+    'Built by Adarsh | DPGU University, Pune | CSE 2025–26'
+  ].filter(l=>l!==null).join('\n');
+  const blob=new Blob([lines],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`Structra-Report-${city}-${Date.now()}.txt`;a.click();
+  URL.revokeObjectURL(url);
+  toast('Analysis report exported!','📥');
+}
+
+function newEst(){
+  S.est=null;if(S.charts.d)S.charts.d.destroy();if(S.charts.sc)S.charts.sc.destroy();S.charts={d:null,sc:null};
+  fi('results').style.display='none';goS(1);upProg(1);sc('estimator');
+}
+</script>
+</body>
+</html>
