@@ -9,4 +9,6 @@ updates
 -gave claude prompts and started working on frontend first to get the design fully 
 -fully execute the frontend and give it time to make it perfect
 
--making sure that the website is working and everything is smooth in terms of transition anf rendering of particles and images 
+-making sure that the website is working and everything is smooth in terms of transition anf rendering of particles and images
+
+- made particles of background image even more tiny so that the break up can look small
